@@ -72,7 +72,7 @@ export default function Navbar() {
               </SheetContent>
             </Sheet>
           </div>
-          <nav className="flex items-center">
+          <nav className="flex items-center gap-2">
             <Button asChild>
               <Link href="/admin/login">Admin Login</Link>
             </Button>

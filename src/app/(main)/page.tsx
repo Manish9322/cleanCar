@@ -1,11 +1,16 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
+import { Award, Car, Facebook, Instagram, Linkedin, Star, Twitter, Users } from "lucide-react";
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
 const serviceImages = [
@@ -27,19 +32,19 @@ const services = [
   {
     title: "Basic Wash",
     description: "A quick and efficient exterior wash to make your car sparkle.",
-    price: "$25",
+    price: "₹999",
     image: serviceImages[0],
   },
   {
     title: "Deluxe Detail",
     description: "Complete interior and exterior cleaning for a showroom look.",
-    price: "$75",
+    price: "₹1999",
     image: serviceImages[1],
   },
   {
     title: "Premium Shine",
     description: "Our best package, including wax and polish for ultimate protection.",
-    price: "$125",
+    price: "₹2999",
     image: serviceImages[2],
   },
 ];
@@ -66,37 +71,90 @@ const teamMembers = [
   {
     name: "John Doe",
     role: "Master Detailer",
+    bio: "With over 10 years of experience, John is the heart of our detailing operations, ensuring every car leaves looking its absolute best.",
     avatar: "https://placehold.co/200x200",
     hint: 'male face'
   },
   {
     name: "Jane Smith",
     role: "Shine Specialist",
+    bio: "Jane's passion for perfection and expertise in polishing and waxing guarantees a mirror-like finish on every vehicle.",
     avatar: "https://placehold.co/200x200",
     hint: 'female face'
   },
   {
     name: "Sam Wilson",
     role: "Lead Technician",
+    bio: "Sam leads our team of technicians with a focus on efficiency, quality, and pioneering new car care techniques.",
     avatar: "https://placehold.co/200x200",
     hint: 'male face'
   }
 ];
 
 export default function HomePage() {
+  const [selectedImage, setSelectedImage] = useState<typeof galleryImages[0] | null>(null);
+  
   return (
     <div className="flex flex-col">
-      <section className="w-full bg-primary">
-        <div className="container flex flex-col items-center justify-center text-center text-primary-foreground p-8 md:p-16">
-          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-headline">
-            The Ultimate Shine for Your Ride
-          </h1>
-          <p className="mt-4 max-w-2xl text-lg md:text-xl text-primary-foreground/80">
-            Experience the best car wash in town. We treat every car like our own.
-          </p>
-          <Button asChild size="lg" className="mt-8 bg-background text-foreground hover:bg-background/90">
-            <Link href="/book">Book Your Wash Today</Link>
-          </Button>
+      <section className="w-full bg-primary overflow-hidden">
+        <div className="container flex flex-col items-center justify-center text-center text-primary-foreground p-8 md:p-16 relative">
+           <div className="absolute top-0 left-0 w-full h-full bg-grid-white/[0.05] z-0" />
+           <div className="z-10">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-headline">
+              The Ultimate Shine for Your Ride
+            </h1>
+            <p className="mt-4 max-w-2xl text-lg md:text-xl text-primary-foreground/80">
+              Experience the best car wash in town. We treat every car like our own, using premium products to deliver a showroom finish, every time.
+            </p>
+            <Button asChild size="lg" className="mt-8 bg-background text-foreground hover:bg-background/90">
+              <Link href="/book">Book Your Wash Today</Link>
+            </Button>
+          </div>
+          <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 text-left z-10">
+            <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
+                <CardHeader>
+                    <Car className="h-8 w-8 text-background" />
+                    <CardTitle className="text-2xl font-bold">10,000+</CardTitle>
+                    <CardDescription className="text-primary-foreground/80">Cars Washed & Detailed</CardDescription>
+                </CardHeader>
+            </Card>
+             <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
+                <CardHeader>
+                    <Users className="h-8 w-8 text-background" />
+                    <CardTitle className="text-2xl font-bold">5,000+</CardTitle>
+                    <CardDescription className="text-primary-foreground/80">Happy Customers</CardDescription>
+                </CardHeader>
+            </Card>
+             <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
+                <CardHeader>
+                    <Award className="h-8 w-8 text-background" />
+                    <CardTitle className="text-2xl font-bold">4.9/5</CardTitle>
+                    <CardDescription className="text-primary-foreground/80">Average Rating</CardDescription>
+                </CardHeader>
+            </Card>
+          </div>
+        </div>
+         <div className="relative h-10 w-full overflow-hidden bg-background text-foreground">
+            <div className="absolute inset-0 whitespace-nowrap animate-marquee flex items-center">
+                <span className="mx-4 font-semibold text-lg">PREMIUM WAX & POLISH</span>
+                <Star className="mx-4 h-5 w-5 text-primary" />
+                <span className="mx-4 font-semibold text-lg">INTERIOR DEEP CLEAN</span>
+                 <Star className="mx-4 h-5 w-5 text-primary" />
+                <span className="mx-4 font-semibold text-lg">SHOWROOM FINISH GUARANTEED</span>
+                 <Star className="mx-4 h-5 w-5 text-primary" />
+                 <span className="mx-4 font-semibold text-lg">ECO-FRIENDLY PRODUCTS</span>
+                 <Star className="mx-4 h-5 w-5 text-primary" />
+            </div>
+             <div className="absolute inset-0 whitespace-nowrap animate-marquee2 flex items-center">
+                <span className="mx-4 font-semibold text-lg">PREMIUM WAX & POLISH</span>
+                <Star className="mx-4 h-5 w-5 text-primary" />
+                <span className="mx-4 font-semibold text-lg">INTERIOR DEEP CLEAN</span>
+                 <Star className="mx-4 h-5 w-5 text-primary" />
+                <span className="mx-4 font-semibold text-lg">SHOWROOM FINISH GUARANTEED</span>
+                 <Star className="mx-4 h-5 w-5 text-primary" />
+                 <span className="mx-4 font-semibold text-lg">ECO-FRIENDLY PRODUCTS</span>
+                 <Star className="mx-4 h-5 w-5 text-primary" />
+            </div>
         </div>
       </section>
 
@@ -110,26 +168,28 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
             {services.map((service) => (
-              <Card key={service.title} className="flex flex-col overflow-hidden transition-shadow hover:shadow-lg">
-                {service.image && (
-                   <div className="relative h-64 w-full">
-                    <Image
-                      src={service.image.imageUrl}
-                      alt={service.image.description}
-                      data-ai-hint={service.image.imageHint}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                )}
-                <CardHeader>
-                  <CardTitle>{service.title}</CardTitle>
-                  <CardDescription className="text-2xl font-bold text-primary">{service.price}</CardDescription>
-                </CardHeader>
-                <CardContent className="flex-1">
-                  <p className="text-muted-foreground">{service.description}</p>
-                </CardContent>
-              </Card>
+              <Link href="/book" key={service.title} className="block">
+                <Card className="flex flex-col overflow-hidden transition-shadow hover:shadow-lg h-full">
+                  {service.image && (
+                     <div className="relative h-64 w-full">
+                      <Image
+                        src={service.image.imageUrl}
+                        alt={service.image.description}
+                        data-ai-hint={service.image.imageHint}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
+                  <CardHeader>
+                    <CardTitle>{service.title}</CardTitle>
+                    <CardDescription className="text-2xl font-bold text-primary">{service.price}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="flex-1">
+                    <p className="text-muted-foreground">{service.description}</p>
+                  </CardContent>
+                </Card>
+              </Link>
             ))}
           </div>
         </div>
@@ -172,35 +232,55 @@ export default function HomePage() {
               A glimpse of our showroom-quality results.
             </p>
           </div>
-          <Carousel
-            opts={{
-              align: "start",
-              loop: true,
-            }}
-            className="w-full"
-          >
-            <CarouselContent>
-              {galleryImages.map((image) => (
-                <CarouselItem key={image.id} className="md:basis-1/2 lg:basis-1/3">
-                  <div className="p-1">
-                    <Card className="overflow-hidden">
-                       <div className="relative aspect-video">
-                        <Image
-                          src={image.src}
-                          alt={image.alt}
-                          data-ai-hint={image.hint}
-                          fill
-                          className="object-cover transition-transform hover:scale-105"
-                        />
+          <Dialog>
+             <Carousel
+                opts={{
+                  align: "start",
+                  loop: true,
+                }}
+                className="w-full"
+              >
+                <CarouselContent>
+                  {galleryImages.map((image) => (
+                    <CarouselItem key={image.id} className="md:basis-1/2 lg:basis-1/3">
+                      <div className="p-1">
+                        <DialogTrigger asChild onClick={() => setSelectedImage(image)}>
+                            <Card className="overflow-hidden cursor-pointer">
+                              <div className="relative aspect-video">
+                                <Image
+                                  src={image.src}
+                                  alt={image.alt}
+                                  data-ai-hint={image.hint}
+                                  fill
+                                  className="object-cover transition-transform hover:scale-105"
+                                />
+                              </div>
+                            </Card>
+                        </DialogTrigger>
                       </div>
-                    </Card>
+                    </CarouselItem>
+                  ))}
+                </CarouselContent>
+                <CarouselPrevious />
+                <CarouselNext />
+              </Carousel>
+
+              {selectedImage && (
+                <DialogContent className="max-w-3xl">
+                  <DialogHeader>
+                    <DialogTitle>{selectedImage.alt}</DialogTitle>
+                  </DialogHeader>
+                  <div className="relative aspect-video">
+                     <Image
+                        src={selectedImage.src}
+                        alt={selectedImage.alt}
+                        fill
+                        className="object-contain rounded-md"
+                      />
                   </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <CarouselPrevious />
-            <CarouselNext />
-          </Carousel>
+                </DialogContent>
+              )}
+          </Dialog>
         </div>
       </section>
 
@@ -214,15 +294,23 @@ export default function HomePage() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {teamMembers.map((member) => (
-               <Card key={member.name} className="text-center">
-                 <CardContent className="pt-6">
-                   <Avatar className="w-24 h-24 mx-auto mb-4">
-                     <AvatarImage src={member.avatar} alt={member.name} data-ai-hint={member.hint} />
-                     <AvatarFallback>{member.name.charAt(0)}</AvatarFallback>
-                   </Avatar>
-                   <h3 className="text-xl font-semibold">{member.name}</h3>
-                   <p className="text-primary">{member.role}</p>
+               <Card key={member.name} className="text-center overflow-hidden group">
+                 <div className="relative h-48">
+                    <Image src={member.avatar} alt={member.name} data-ai-hint={member.hint} fill className="object-cover grayscale group-hover:grayscale-0 transition-all duration-300" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                     <div className="absolute bottom-4 left-4 text-left text-white">
+                        <h3 className="text-xl font-bold">{member.name}</h3>
+                        <p className="text-primary-foreground/80">{member.role}</p>
+                    </div>
+                 </div>
+                 <CardContent className="pt-6 text-left">
+                   <p className="text-muted-foreground text-sm">{member.bio}</p>
                  </CardContent>
+                 <CardFooter className="flex justify-center gap-4 pb-6">
+                    <Link href="#" className="text-muted-foreground hover:text-primary"><Twitter className="h-5 w-5" /></Link>
+                    <Link href="#" className="text-muted-foreground hover:text-primary"><Facebook className="h-5 w-5" /></Link>
+                    <Link href="#" className="text-muted-foreground hover:text-primary"><Linkedin className="h-5 w-5" /></Link>
+                 </CardFooter>
                </Card>
             ))}
           </div>
@@ -264,7 +352,7 @@ export default function HomePage() {
       </section>
 
       <section id="cta" className="py-12 md:py-24 bg-primary text-primary-foreground">
-        <div className="container text-center">
+        <div className="container text-center max-w-7xl mx-auto">
            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Ready for a Flawless Shine?</h2>
             <p className="mt-2 text-lg text-primary-foreground/80">
               Your car deserves the best. Book your appointment today and experience the AquaShine difference.

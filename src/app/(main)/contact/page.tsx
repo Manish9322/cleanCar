@@ -37,98 +37,104 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="container py-12 md:py-24">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold tracking-tight sm:text-5xl font-headline">Contact Us</h1>
-        <p className="mt-4 max-w-2xl mx-auto text-lg text-muted-foreground">
-          Have a question or want to give feedback? We'd love to hear from you.
-        </p>
-      </div>
+    <>
+      <section className="w-full bg-primary/90">
+          <div className="container text-center text-primary-foreground py-16 md:py-24">
+            <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-headline">
+              Contact Us
+            </h1>
+            <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-primary-foreground/80">
+              Have a question or want to give feedback? We'd love to hear from you.
+            </p>
+          </div>
+      </section>
 
-      <div className="mt-16 grid md:grid-cols-2 gap-12">
-        <div className="space-y-8">
-          <div className="flex items-start gap-4">
-            <div className="bg-primary text-primary-foreground p-3 rounded-md">
-              <MapPin className="h-6 w-6" />
+      <div className="container py-12 md:py-24 max-w-7xl mx-auto">
+        <div className="grid md:grid-cols-2 gap-12">
+          <div className="space-y-8">
+            <div className="flex items-start gap-4">
+              <div className="bg-primary text-primary-foreground p-3 rounded-md">
+                <MapPin className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">Our Location</h3>
+                <p className="text-muted-foreground">123 Sparkle Ave, Clean City, 12345</p>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-semibold">Our Location</h3>
-              <p className="text-muted-foreground">123 Sparkle Ave, Clean City, 12345</p>
+            <div className="flex items-start gap-4">
+              <div className="bg-primary text-primary-foreground p-3 rounded-md">
+                <Phone className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">Call Us</h3>
+                <p className="text-muted-foreground">(123) 456-7890</p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4">
+              <div className="bg-primary text-primary-foreground p-3 rounded-md">
+                <Mail className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">Email Us</h3>
+                <p className="text-muted-foreground">contact@aquashine.com</p>
+              </div>
             </div>
           </div>
-          <div className="flex items-start gap-4">
-            <div className="bg-primary text-primary-foreground p-3 rounded-md">
-              <Phone className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold">Call Us</h3>
-              <p className="text-muted-foreground">(123) 456-7890</p>
-            </div>
-          </div>
-          <div className="flex items-start gap-4">
-            <div className="bg-primary text-primary-foreground p-3 rounded-md">
-              <Mail className="h-6 w-6" />
-            </div>
-            <div>
-              <h3 className="text-xl font-semibold">Email Us</h3>
-              <p className="text-muted-foreground">contact@aquashine.com</p>
-            </div>
-          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Send a Message</CardTitle>
+              <CardDescription>Fill out the form and we'll be in touch.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="John Doe" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email Address</FormLabel>
+                        <FormControl>
+                          <Input placeholder="you@example.com" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="message"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Your Message</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder="How can we help you?" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <Button type="submit" className="w-full">Send Message</Button>
+                </form>
+              </Form>
+            </CardContent>
+          </Card>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Send a Message</CardTitle>
-            <CardDescription>Fill out the form and we'll be in touch.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Full Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="John Doe" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Email Address</FormLabel>
-                      <FormControl>
-                        <Input placeholder="you@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="message"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Your Message</FormLabel>
-                      <FormControl>
-                        <Textarea placeholder="How can we help you?" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full">Send Message</Button>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
       </div>
-    </div>
+    </>
   );
 }
