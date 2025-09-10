@@ -3,7 +3,7 @@ import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 export const aquaShineApi = createApi({
   reducerPath: 'aquaShineApi',
   baseQuery: fetchBaseQuery({ baseUrl: '/api' }),
-  tagTypes: ['Users', 'Services', 'Bookings', 'Feedback'],
+  tagTypes: ['Users', 'Services', 'Bookings', 'Feedback', 'Contacts'],
   endpoints: (builder) => ({
     // ======================================== USERS ======================================== //
     getUsers: builder.query({
@@ -120,6 +120,27 @@ export const aquaShineApi = createApi({
         }),
         invalidatesTags: ['Feedback'],
     }),
+
+     // ======================================== CONTACT ======================================== //
+    getContacts: builder.query({
+      query: () => '/contact',
+      providesTags: ['Contacts'],
+    }),
+    addContact: builder.mutation({
+      query: (contact) => ({
+        url: '/contact',
+        method: 'POST',
+        body: contact,
+      }),
+      invalidatesTags: ['Contacts'],
+    }),
+    deleteContact: builder.mutation({
+      query: (id) => ({
+        url: `/contact?id=${id}`,
+        method: 'DELETE',
+      }),
+      invalidatesTags: ['Contacts'],
+    }),
   }),
 });
 
@@ -140,4 +161,7 @@ export const {
   useAddFeedbackMutation,
   useUpdateFeedbackMutation,
   useDeleteFeedbackMutation,
+  useGetContactsQuery,
+  useAddContactMutation,
+  useDeleteContactMutation,
 } = aquaShineApi;

@@ -7,6 +7,7 @@ import {
   BookCopy,
   Users,
   MessageSquare,
+  Mail,
 } from "lucide-react";
 
 import {
@@ -67,6 +68,12 @@ export default function AdminPanelLayout({
               <SidebarMenuButton href="/admin/feedback">
                 <MessageSquare />
                 Feedback
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton href="/admin/contact">
+                <Mail />
+                Contact Messages
               </SidebarMenuButton>
             </SidebarMenuItem>
              <SidebarMenuItem>
