@@ -87,7 +87,7 @@ export default function HomePage() {
   return (
     <div className="flex flex-col">
       <section className="w-full bg-primary">
-        <div className="container flex flex-col items-center justify-center h-full text-center text-primary-foreground p-8 md:p-16">
+        <div className="container flex flex-col items-center justify-center text-center text-primary-foreground p-8 md:p-16">
           <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-headline">
             The Ultimate Shine for Your Ride
           </h1>
