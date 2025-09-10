@@ -1,12 +1,17 @@
+
 "use client";
 
 import Link from "next/link";
-import { Car, Menu, User } from "lucide-react";
-import { usePathname } from "next/navigation";
+import { Car, Menu, User, LogOut } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { use, useEffect, useState } from "react";
+import { headers } from "next/headers";
+
 
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -15,8 +20,57 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
+async function logout() {
+    const res = await fetch('/api/auth/logout', { method: 'POST' });
+    return res.ok;
+}
+
+function useUser() {
+    const [user, setUser] = useState<any>(null);
+    const headerList = (typeof window !== 'undefined') ? window.Headers : null;
+
+    useEffect(() => {
+        const userPayload = headerList ? new headerList().get('x-user-payload') : null;
+        if (userPayload) {
+            try {
+                setUser(JSON.parse(userPayload));
+            } catch (e) {
+                console.error("Failed to parse user payload", e);
+                setUser(null);
+            }
+        }
+    }, [headerList]);
+    return user;
+}
+
+
 export default function Navbar() {
   const pathname = usePathname();
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // A simple check if the cookie exists. For a real app, you might decode it.
+    // This runs on the client-side
+    if (typeof window !== 'undefined') {
+        const token = document.cookie.split('; ').find(row => row.startsWith('auth_token='));
+        setIsAuthenticated(!!token);
+    }
+  }, [pathname]);
+
+
+  const handleLogout = async () => {
+    const response = await fetch('/api/auth/logout', { method: 'POST' });
+    if(response.ok) {
+        toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
+        setIsAuthenticated(false);
+        router.push('/');
+        router.refresh();
+    } else {
+        toast({ title: 'Logout Failed', description: 'Something went wrong.', variant: 'destructive' });
+    }
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -79,15 +133,29 @@ export default function Navbar() {
                 </Link>
            </div>
           <nav className="flex items-center gap-2">
-            <Button asChild variant="secondary">
-                <Link href="/user/profile">
-                    <User className="mr-2 h-4 w-4"/>
-                    My Account
-                </Link>
-            </Button>
-            <Button asChild>
-              <Link href="/auth/login">Login</Link>
-            </Button>
+            {isAuthenticated ? (
+                <>
+                    <Button asChild variant="secondary">
+                        <Link href="/user/profile">
+                            <User className="mr-2 h-4 w-4"/>
+                            My Account
+                        </Link>
+                    </Button>
+                    <Button variant="outline" onClick={handleLogout}>
+                         <LogOut className="mr-2 h-4 w-4" />
+                        Logout
+                    </Button>
+                </>
+            ) : (
+                 <>
+                    <Button asChild>
+                        <Link href="/auth/login">Login</Link>
+                    </Button>
+                     <Button asChild variant="secondary">
+                        <Link href="/auth/register">Register</Link>
+                    </Button>
+                </>
+            )}
              <Button asChild>
               <Link href="/admin/login">Admin Login</Link>
             </Button>

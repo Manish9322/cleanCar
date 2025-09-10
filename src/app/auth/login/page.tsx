@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -29,15 +30,34 @@ export default function LoginPage() {
     defaultValues: { email: "", password: "" },
   });
 
-  function onSubmit(data: LoginFormValues) {
-    // In a real app, you'd authenticate here.
-    console.log(data);
-    toast({
-      title: "Login Successful",
-      description: "Redirecting to your dashboard...",
-    });
-    // Redirect to user profile for now, can be changed later
-    router.push('/user/profile');
+  async function onSubmit(data: LoginFormValues) {
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            throw new Error(result.message || 'Something went wrong');
+        }
+        
+        toast({
+            title: "Login Successful",
+            description: "Redirecting...",
+        });
+
+        router.push('/');
+        router.refresh(); // Refresh to update navbar state
+    } catch (error: any) {
+        toast({
+            title: "Login Failed",
+            description: error.message,
+            variant: 'destructive'
+        });
+    }
   }
 
   return (
@@ -75,8 +95,8 @@ export default function LoginPage() {
                 </FormItem>
                 )}
             />
-            <Button type="submit" className="w-full">
-                Sign In
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting ? 'Signing In...' : 'Sign In'}
             </Button>
             </form>
         </Form>

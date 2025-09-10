@@ -36,17 +36,35 @@ export default function RegisterPage() {
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: "", email: "", password: "" },
+    defaultValues: { name: "", email: "", password: "", phone: "", address: "", vehicleNumber: "" },
   });
 
-  function onSubmit(data: RegisterFormValues) {
-    // In a real app, you'd handle registration here.
-    console.log(data);
-    toast({
-      title: "Registration Successful",
-      description: "Your account has been created.",
-    });
-    router.push('/auth/login');
+  async function onSubmit(data: RegisterFormValues) {
+    try {
+      const response = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || 'Something went wrong');
+      }
+
+      toast({
+        title: "Registration Successful",
+        description: "Your account has been created. Please log in.",
+      });
+      router.push('/auth/login');
+    } catch (error: any) {
+      toast({
+        title: "Registration Failed",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
   }
 
   return (
@@ -93,7 +111,7 @@ export default function RegisterPage() {
                 <FormItem>
                   <FormLabel>Password</FormLabel>
                   <FormControl>
-                    <Input type="password" placeholder="••••••••" />
+                    <Input type="password" placeholder="••••••••" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -165,8 +183,8 @@ export default function RegisterPage() {
                 />
             </div>
            
-            <Button type="submit" className="w-full">
-              Create Account
+            <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? 'Creating Account...' : 'Create Account'}
             </Button>
           </form>
         </Form>

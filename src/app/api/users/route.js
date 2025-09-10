@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import connectDB from '@/lib/db';
 import User from '@/models/User.model';
+import bcrypt from 'bcryptjs';
 
 // GET all users
 export async function GET() {
@@ -18,7 +19,7 @@ export async function POST(request) {
   try {
     await connectDB();
     const body = await request.json();
-    const { name, email, password, phone } = body;
+    const { name, email, password, phone, address, vehicleType, vehicleNumber } = body;
 
     if (!name || !email || !password) {
       return NextResponse.json({ success: false, message: 'Name, email, and password are required' }, { status: 400 });
@@ -29,8 +30,18 @@ export async function POST(request) {
         return NextResponse.json({ success: false, message: 'User with this email already exists' }, { status: 400 });
     }
 
-    // In a real app, you would hash the password here before saving
-    const user = new User({ name, email, password, phone });
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = new User({ 
+        name, 
+        email, 
+        password: hashedPassword, 
+        phone,
+        address,
+        vehicleType,
+        vehicleNumber
+    });
     await user.save();
     
     const userResponse = user.toObject();
@@ -52,6 +63,12 @@ export async function PUT(request) {
 
         if (!id) {
             return NextResponse.json({ success: false, message: 'User ID is required' }, { status: 400 });
+        }
+
+        // If password is being updated, hash it
+        if (body.password) {
+            const salt = await bcrypt.genSalt(10);
+            body.password = await bcrypt.hash(body.password, salt);
         }
 
         const updatedUser = await User.findByIdAndUpdate(id, body, { new: true, runValidators: true }).select('-password');

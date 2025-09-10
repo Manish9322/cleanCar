@@ -1,67 +1,61 @@
 
+"use client";
+
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle, Car, Phone } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Car, Phone, Loader2 } from "lucide-react";
+import { useGetUsersQuery, useDeleteUserMutation } from "@/lib/api";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
-const customers = [
-  {
-    id: "CUST-001",
-    name: "Liam Johnson",
-    email: "liam@example.com",
-    avatar: "https://picsum.photos/seed/101/100/100",
-    joinDate: "2023-10-15",
-    phone: "9876543210",
-    vehicleType: "SUV",
-    vehicleNumber: "NY 01 XY 5678",
-  },
-  {
-    id: "CUST-002",
-    name: "Olivia Smith",
-    email: "olivia@example.com",
-    avatar: "https://picsum.photos/seed/102/100/100",
-    joinDate: "2023-11-01",
-    phone: "8765432109",
-    vehicleType: "Sedan",
-    vehicleNumber: "CA 02 AB 1234",
-  },
-  {
-    id: "CUST-003",
-    name: "Noah Williams",
-    email: "noah@example.com",
-    avatar: "https://picsum.photos/seed/103/100/100",
-    joinDate: "2024-01-20",
-    phone: "7654321098",
-    vehicleType: "Hatchback",
-    vehicleNumber: "TX 03 CD 9012",
-  },
-  {
-    id: "CUST-004",
-    name: "Emma Brown",
-    email: "emma@example.com",
-    avatar: "https://picsum.photos/seed/104/100/100",
-    joinDate: "2023-09-05",
-    phone: "6543210987",
-    vehicleType: "SUV",
-    vehicleNumber: "FL 04 EF 3456",
-  },
-  {
-    id: "CUST-005",
-    name: "James Jones",
-    email: "james@example.com",
-    avatar: "https://picsum.photos/seed/105/100/100",
-    joinDate: "2024-02-11",
-    phone: "5432109876",
-    vehicleType: "Truck",
-    vehicleNumber: "OH 05 GH 7890",
-  },
-];
+function CustomerSkeleton() {
+    return (
+        <TableRow>
+            <TableCell>
+                <div className="flex items-center gap-3">
+                    <Skeleton className="h-10 w-10 rounded-full" />
+                    <div>
+                        <Skeleton className="h-4 w-24" />
+                        <Skeleton className="h-3 w-32 mt-1" />
+                    </div>
+                </div>
+            </TableCell>
+            <TableCell className="hidden md:table-cell">
+                <Skeleton className="h-4 w-28" />
+            </TableCell>
+            <TableCell className="hidden lg:table-cell">
+                <Skeleton className="h-4 w-36" />
+            </TableCell>
+            <TableCell className="hidden lg:table-cell">
+                <Skeleton className="h-4 w-24" />
+            </TableCell>
+            <TableCell>
+                <Skeleton className="h-8 w-8" />
+            </TableCell>
+        </TableRow>
+    )
+}
 
 export default function AdminCustomersPage() {
+  const { data: users, isLoading, isError, error } = useGetUsersQuery(undefined);
+  const [deleteUser, { isLoading: isDeleting }] = useDeleteUserMutation();
+  const { toast } = useToast();
+
+  const handleDelete = async (id: string) => {
+    if (!window.confirm("Are you sure you want to delete this user?")) return;
+
+    try {
+        await deleteUser(id).unwrap();
+        toast({ title: "Success", description: "User deleted successfully." });
+    } catch (err) {
+        toast({ title: "Error", description: "Failed to delete user.", variant: "destructive" });
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
@@ -91,13 +85,22 @@ export default function AdminCustomersPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {customers.map((customer) => (
-                <TableRow key={customer.id}>
+              {isLoading ? (
+                Array.from({ length: 5 }).map((_, i) => <CustomerSkeleton key={i} />)
+              ) : isError ? (
+                <TableRow>
+                    <TableCell colSpan={5} className="text-center text-destructive">
+                        Failed to load users: {(error as any)?.data?.message || 'Server error'}
+                    </TableCell>
+                </TableRow>
+              ) : (
+                users?.data.map((customer: any) => (
+                <TableRow key={customer._id}>
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <Avatar>
-                        <AvatarImage src={customer.avatar} alt={customer.name} />
-                        <AvatarFallback>{customer.name.charAt(0)}</AvatarFallback>
+                        <AvatarImage src={`https://picsum.photos/seed/${customer._id}/100/100`} alt={customer.name} />
+                        <AvatarFallback>{customer.name?.charAt(0)}</AvatarFallback>
                       </Avatar>
                       <div>
                         <div className="font-medium">{customer.name}</div>
@@ -108,19 +111,19 @@ export default function AdminCustomersPage() {
                   <TableCell className="hidden md:table-cell">
                     <div className="flex items-center gap-2">
                         <Phone className="h-4 w-4 text-muted-foreground"/>
-                        <span>{customer.phone}</span>
+                        <span>{customer.phone || 'N/A'}</span>
                     </div>
                   </TableCell>
                   <TableCell className="hidden lg:table-cell">
                      <div className="flex items-center gap-2">
                         <Car className="h-4 w-4 text-muted-foreground"/>
                         <div>
-                            <div>{customer.vehicleType}</div>
-                            <div className="text-xs text-muted-foreground">{customer.vehicleNumber}</div>
+                            <div>{customer.vehicleType || 'N/A'}</div>
+                            <div className="text-xs text-muted-foreground">{customer.vehicleNumber || 'N/A'}</div>
                         </div>
                     </div>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell">{customer.joinDate}</TableCell>
+                  <TableCell className="hidden lg:table-cell">{new Date(customer.createdAt).toLocaleDateString()}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
@@ -133,12 +136,15 @@ export default function AdminCustomersPage() {
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuItem>View Details</DropdownMenuItem>
                         <DropdownMenuItem>Edit Customer</DropdownMenuItem>
-                        <DropdownMenuItem className="text-destructive">Delete Customer</DropdownMenuItem>
+                        <DropdownMenuItem className="text-destructive" onClick={() => handleDelete(customer._id)} disabled={isDeleting}>
+                            {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                            Delete Customer
+                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
                 </TableRow>
-              ))}
+              )))}
             </TableBody>
           </Table>
         </CardContent>
