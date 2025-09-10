@@ -1,10 +1,11 @@
+
 "use client";
 
 import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { CalendarIcon, Check } from "lucide-react";
+import { CalendarIcon, Check, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { useGetServicesQuery, useAddBookingMutation } from "@/lib/api";
 
@@ -88,7 +89,7 @@ export function BookingForm() {
     }
   }
   
-  const activeServices = servicesData?.data.filter((service: any) => service.isActive);
+  const activeServices = servicesData?.data?.filter((service: any) => service.isActive) || [];
 
 
   return (
@@ -240,7 +241,7 @@ export function BookingForm() {
                 />
             </div>
             
-            <Button type="submit" size="lg" className="w-full" disabled={isBooking}>
+            <Button type="submit" size="lg" className="w-full" disabled={isBooking || isLoadingServices}>
                 {isBooking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
                 Book Now
             </Button>

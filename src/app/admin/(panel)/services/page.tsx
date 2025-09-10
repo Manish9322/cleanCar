@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -19,24 +20,47 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 type Service = {
   _id?: string;
-  id?: string;
   name: string;
   description: string;
-  price: string;
+  price: number;
   duration: string;
   isActive: boolean;
 };
 
-function ServiceModal({ service, children, onSave, isLoading }: { service?: Service, children: React.ReactNode, onSave: (service: Omit<Service, 'id' | '_id'>) => void, isLoading: boolean }) {
+type ServiceModalProps = {
+    service?: Service | null;
+    children: React.ReactNode;
+    onSave: (service: Partial<Service>) => void;
+    isLoading: boolean;
+}
+
+function ServiceModal({ service, children, onSave, isLoading }: ServiceModalProps) {
   const [name, setName] = useState(service?.name || "");
   const [description, setDescription] = useState(service?.description || "");
-  const [price, setPrice] = useState(service?.price || "");
+  const [price, setPrice] = useState(service?.price || 0);
   const [duration, setDuration] = useState(service?.duration || "");
   const [isActive, setIsActive] = useState(service?.isActive ?? true);
   const [open, setOpen] = useState(false);
 
+  React.useEffect(() => {
+    if (open && service) {
+        setName(service.name);
+        setDescription(service.description);
+        setPrice(service.price);
+        setDuration(service.duration);
+        setIsActive(service.isActive);
+    } else if (open && !service) {
+        setName("");
+        setDescription("");
+        setPrice(0);
+        setDuration("");
+        setIsActive(true);
+    }
+  }, [open, service]);
+
+
   const handleSubmit = () => {
-    onSave({ name, description, price, duration, isActive });
+    onSave({ _id: service?._id, name, description, price, duration, isActive });
     setOpen(false);
   };
   
@@ -61,7 +85,7 @@ function ServiceModal({ service, children, onSave, isLoading }: { service?: Serv
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="price" className="text-right">Price (₹)</Label>
-            <Input id="price" type="number" value={price} onChange={(e) => setPrice(e.target.value)} placeholder="e.g., 3999" className="col-span-3" />
+            <Input id="price" type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} placeholder="e.g., 3999" className="col-span-3" />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="duration" className="text-right">Duration</Label>
@@ -104,22 +128,22 @@ export default function AdminServicesPage() {
   const [deleteService, { isLoading: isDeleting }] = useDeleteServiceMutation();
   const { toast } = useToast();
 
-  const handleSave = async (serviceToSave: Service) => {
+  const handleSave = async (serviceToSave: Partial<Service>) => {
+    const { _id, ...serviceData } = serviceToSave;
     try {
-        if(serviceToSave.id) { // It's an update
-            await updateService(serviceToSave).unwrap();
+        if(_id) { // It's an update
+            await updateService({ id: _id, ...serviceData }).unwrap();
             toast({ title: 'Success', description: 'Service updated successfully.' });
         } else { // It's a new service
-            await addService(serviceToSave).unwrap();
+            await addService(serviceData).unwrap();
             toast({ title: 'Success', description: 'Service added successfully.' });
         }
     } catch(err) {
-        toast({ title: 'Error', description: 'Failed to save service.', variant: 'destructive'});
+        toast({ title: 'Error', description: (err as any)?.data?.message || 'Failed to save service.', variant: 'destructive'});
     }
   };
 
   const handleDelete = async (serviceId: string) => {
-     if (!window.confirm("Are you sure? This will permanently delete the service.")) return;
     try {
         await deleteService(serviceId).unwrap();
         toast({ title: 'Success', description: 'Service deleted successfully.' });
@@ -129,14 +153,16 @@ export default function AdminServicesPage() {
   };
   
   const toggleActive = (service: Service) => {
-      handleSave({ ...service, isActive: !service.isActive });
+      handleSave({ _id: service._id, isActive: !service.isActive });
   };
+
+  const anyLoading = isAdding || isUpdating || isDeleting;
 
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
        <h1 className="text-3xl font-bold tracking-tight">Services</h1>
-        <ServiceModal onSave={handleSave} isLoading={isAdding}>
+        <ServiceModal onSave={handleSave} isLoading={isAdding} service={null}>
             <Button>
                 <PlusCircle className="mr-2 h-4 w-4" /> Add New Service
             </Button>
@@ -184,14 +210,14 @@ export default function AdminServicesPage() {
                      <TableCell>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button aria-haspopup="true" size="icon" variant="ghost">
-                            <MoreHorizontal className="h-4 w-4" />
+                          <Button aria-haspopup="true" size="icon" variant="ghost" disabled={anyLoading}>
+                             {isUpdating || isDeleting ? <Loader2 className="h-4 w-4 animate-spin"/> : <MoreHorizontal className="h-4 w-4" />}
                             <span className="sr-only">Toggle menu</span>
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                           <ServiceModal service={service} onSave={(updated) => handleSave({ ...updated, id: service._id })} isLoading={isUpdating}>
+                           <ServiceModal service={service} onSave={handleSave} isLoading={isUpdating}>
                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Edit Service</DropdownMenuItem>
                            </ServiceModal>
                           <DropdownMenuItem onClick={() => toggleActive(service)} disabled={isUpdating}>
@@ -201,8 +227,7 @@ export default function AdminServicesPage() {
                           <DropdownMenuSeparator />
                            <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()} disabled={isDeleting}>
-                                        {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>
                                         Delete Service
                                     </DropdownMenuItem>
                                 </AlertDialogTrigger>
@@ -215,7 +240,10 @@ export default function AdminServicesPage() {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDelete(service._id as string)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                                    <AlertDialogAction onClick={() => handleDelete(service._id as string)} className="bg-destructive hover:bg-destructive/90" disabled={isDeleting}>
+                                        {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Delete
+                                    </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>

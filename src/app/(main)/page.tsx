@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -10,7 +11,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Award, Car, Facebook, Instagram, Linkedin, Star, Twitter, Users, TrendingUp, MessageSquare } from "lucide-react";
+import { Award, Car, Facebook, Instagram, Linkedin, Star, Twitter, Users, TrendingUp, MessageSquare, Loader2 } from "lucide-react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -18,6 +19,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { useAddFeedbackMutation } from "@/lib/api";
 
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
@@ -110,18 +112,28 @@ type FeedbackFormValues = z.infer<typeof feedbackFormSchema>;
 
 function FeedbackForm() {
     const { toast } = useToast();
+    const [addFeedback, { isLoading }] = useAddFeedbackMutation();
+
     const form = useForm<FeedbackFormValues>({
       resolver: zodResolver(feedbackFormSchema),
       defaultValues: { name: "", email: "", feedback: "" },
     });
 
-    function onSubmit(data: FeedbackFormValues) {
-        console.log(data);
-        toast({
-        title: "Feedback Submitted!",
-        description: "Thank you for sharing your thoughts with us.",
-        });
-        form.reset();
+    async function onSubmit(data: FeedbackFormValues) {
+        try {
+            await addFeedback(data).unwrap();
+            toast({
+                title: "Feedback Submitted!",
+                description: "Thank you for sharing your thoughts with us.",
+            });
+            form.reset();
+        } catch (error) {
+             toast({
+                title: "Submission Failed",
+                description: "There was an error submitting your feedback.",
+                variant: "destructive"
+            });
+        }
     }
     
     return (
@@ -174,7 +186,10 @@ function FeedbackForm() {
                             </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-full">Submit Feedback</Button>
+                        <Button type="submit" className="w-full" disabled={isLoading}>
+                            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            Submit Feedback
+                        </Button>
                     </form>
                 </Form>
             </CardContent>
