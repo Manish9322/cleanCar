@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -557,33 +558,29 @@ const SidebarMenuButton = React.forwardRef<
     },
     ref
   ) => {
-    const Comp = asChild ? Slot : href ? "a" : "button";
     const { isMobile, state } = useSidebar()
     
     const element = href ? (
-      <NextLink href={href} passHref legacyBehavior>
-        <Comp
-            ref={ref as any}
-            data-sidebar="menu-button"
-            data-size={size}
-            data-active={isActive}
-            className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
-            {...props}
-        >
-          {children}
-        </Comp>
-      </NextLink>
-    ) : (
-      <Comp
-        ref={ref}
+      <NextLink
+        href={href}
+        ref={ref as any}
         data-sidebar="menu-button"
         data-size={size}
         data-active={isActive}
         className={cn(sidebarMenuButtonVariants({ variant, size }), className)}
-        {...props}
+        {...props as any}
       >
         {children}
-      </Comp>
+      </NextLink>
+    ) : (
+      React.createElement(asChild ? Slot : "button", {
+        ref: ref,
+        "data-sidebar": "menu-button",
+        "data-size": size,
+        "data-active": isActive,
+        className: cn(sidebarMenuButtonVariants({ variant, size }), className),
+        ...props,
+      }, children)
     );
 
 
