@@ -32,13 +32,21 @@ export async function middleware(request: NextRequest) {
   }
   
   // Protect admin routes
-  if (pathname.startsWith('/admin')) {
+  if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     if (!user || (user as any).role !== 'admin') {
       const url = request.nextUrl.clone();
       url.pathname = '/admin/login';
-      return NextResponse.rewrite(url);
+      return NextResponse.redirect(url);
     }
   }
+  
+  // Redirect logged-in admin from admin login page
+  if (pathname.startsWith('/admin/login') && user && (user as any).role === 'admin') {
+      const url = request.nextUrl.clone();
+      url.pathname = '/admin';
+      return NextResponse.redirect(url);
+  }
+
 
   // Protect user profile routes
   if (pathname.startsWith('/user')) {
@@ -49,12 +57,8 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect logged-in users from auth pages to home
-  if ((pathname.startsWith('/auth/login') || pathname.startsWith('/auth/register')) && user) {
-     const url = request.nextUrl.clone();
-     url.pathname = '/';
-     return NextResponse.redirect(url);
-  }
+  // Redirect logged-in users from auth pages to home - REMOVED for easier account switching.
+  // A user can now visit login/register pages even if logged in. They can logout from the navbar if they wish to switch.
 
   return response;
 }
