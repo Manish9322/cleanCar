@@ -1,21 +1,25 @@
 "use client";
 
 import { useState } from 'react';
+import { useGetServicesQuery, useAddServiceMutation, useUpdateServiceMutation, useDeleteServiceMutation } from '@/lib/api';
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Loader2 } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
+import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type Service = {
-  id: string;
+  _id?: string;
+  id?: string;
   name: string;
   description: string;
   price: string;
@@ -23,42 +27,7 @@ type Service = {
   isActive: boolean;
 };
 
-const initialServices: Service[] = [
-  {
-    id: "basic",
-    name: "Basic Wash",
-    description: "A quick and efficient exterior wash to make your car sparkle.",
-    price: "999",
-    duration: "30 mins",
-    isActive: true,
-  },
-  {
-    id: "deluxe",
-    name: "Deluxe Detail",
-    description: "Complete interior and exterior cleaning for a showroom look.",
-    price: "1999",
-    duration: "1.5 hours",
-    isActive: true,
-  },
-  {
-    id: "premium",
-    name: "Premium Shine",
-    description: "Our best package, including wax and polish for ultimate protection.",
-    price: "2999",
-    duration: "2.5 hours",
-    isActive: true,
-  },
-    {
-    id: "interior",
-    name: "Interior Only",
-    description: "A focused deep clean of the car's interior.",
-    price: "1499",
-    duration: "1 hour",
-    isActive: false,
-  },
-];
-
-function ServiceModal({ service, children, onSave }: { service?: Service, children: React.ReactNode, onSave: (service: Service) => void }) {
+function ServiceModal({ service, children, onSave, isLoading }: { service?: Service, children: React.ReactNode, onSave: (service: Omit<Service, 'id' | '_id'>) => void, isLoading: boolean }) {
   const [name, setName] = useState(service?.name || "");
   const [description, setDescription] = useState(service?.description || "");
   const [price, setPrice] = useState(service?.price || "");
@@ -67,15 +36,7 @@ function ServiceModal({ service, children, onSave }: { service?: Service, childr
   const [open, setOpen] = useState(false);
 
   const handleSubmit = () => {
-    const newService: Service = {
-      id: service?.id || `new-${Date.now()}`,
-      name,
-      description,
-      price,
-      duration,
-      isActive
-    };
-    onSave(newService);
+    onSave({ name, description, price, duration, isActive });
     setOpen(false);
   };
   
@@ -113,39 +74,69 @@ function ServiceModal({ service, children, onSave }: { service?: Service, childr
         </div>
         <DialogFooter>
            <Button type="button" variant="secondary" onClick={() => setOpen(false)}>Cancel</Button>
-           <Button type="submit" onClick={handleSubmit}>Save Changes</Button>
+           <Button type="submit" onClick={handleSubmit} disabled={isLoading}>
+            {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+            Save Changes
+           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
   )
 }
 
-export default function AdminServicesPage() {
-  const [services, setServices] = useState<Service[]>(initialServices);
+function ServiceSkeleton() {
+    return (
+        <TableRow>
+            <TableCell><Skeleton className="h-4 w-32" /></TableCell>
+            <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-64" /></TableCell>
+            <TableCell><Skeleton className="h-4 w-16" /></TableCell>
+            <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-24" /></TableCell>
+            <TableCell><Skeleton className="h-6 w-16 rounded-full" /></TableCell>
+            <TableCell><Skeleton className="h-8 w-8" /></TableCell>
+        </TableRow>
+    )
+}
 
-  const handleSave = (serviceToSave: Service) => {
-    const exists = services.find(s => s.id === serviceToSave.id);
-    if (exists) {
-      setServices(services.map(s => s.id === serviceToSave.id ? serviceToSave : s));
-    } else {
-      setServices([...services, serviceToSave]);
+export default function AdminServicesPage() {
+  const { data: services, isLoading, isError, error } = useGetServicesQuery(undefined);
+  const [addService, { isLoading: isAdding }] = useAddServiceMutation();
+  const [updateService, { isLoading: isUpdating }] = useUpdateServiceMutation();
+  const [deleteService, { isLoading: isDeleting }] = useDeleteServiceMutation();
+  const { toast } = useToast();
+
+  const handleSave = async (serviceToSave: Service) => {
+    try {
+        if(serviceToSave.id) { // It's an update
+            await updateService(serviceToSave).unwrap();
+            toast({ title: 'Success', description: 'Service updated successfully.' });
+        } else { // It's a new service
+            await addService(serviceToSave).unwrap();
+            toast({ title: 'Success', description: 'Service added successfully.' });
+        }
+    } catch(err) {
+        toast({ title: 'Error', description: 'Failed to save service.', variant: 'destructive'});
     }
   };
 
-  const handleDelete = (serviceId: string) => {
-    setServices(services.filter(s => s.id !== serviceId));
+  const handleDelete = async (serviceId: string) => {
+     if (!window.confirm("Are you sure? This will permanently delete the service.")) return;
+    try {
+        await deleteService(serviceId).unwrap();
+        toast({ title: 'Success', description: 'Service deleted successfully.' });
+    } catch(err) {
+        toast({ title: 'Error', description: 'Failed to delete service.', variant: 'destructive'});
+    }
   };
   
   const toggleActive = (service: Service) => {
       handleSave({ ...service, isActive: !service.isActive });
   };
 
-
   return (
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
        <h1 className="text-3xl font-bold tracking-tight">Services</h1>
-        <ServiceModal onSave={handleSave}>
+        <ServiceModal onSave={handleSave} isLoading={isAdding}>
             <Button>
                 <PlusCircle className="mr-2 h-4 w-4" /> Add New Service
             </Button>
@@ -171,8 +162,16 @@ export default function AdminServicesPage() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {services.map((service) => (
-                  <TableRow key={service.id}>
+                {isLoading ? (
+                    Array.from({length: 4}).map((_, i) => <ServiceSkeleton key={i} />)
+                ) : isError ? (
+                     <TableRow>
+                        <TableCell colSpan={6} className="text-center text-destructive">
+                            Failed to load services: {(error as any)?.data?.message || 'Server error'}
+                        </TableCell>
+                    </TableRow>
+                ) : (services?.data.map((service: Service) => (
+                  <TableRow key={service._id}>
                     <TableCell className="font-medium">{service.name}</TableCell>
                     <TableCell className="text-sm text-muted-foreground hidden md:table-cell max-w-xs truncate">{service.description}</TableCell>
                     <TableCell>₹{service.price}</TableCell>
@@ -192,14 +191,20 @@ export default function AdminServicesPage() {
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                           <ServiceModal service={service} onSave={handleSave}>
+                           <ServiceModal service={service} onSave={(updated) => handleSave({ ...updated, id: service._id })} isLoading={isUpdating}>
                                <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Edit Service</DropdownMenuItem>
                            </ServiceModal>
-                          <DropdownMenuItem onClick={() => toggleActive(service)}>{service.isActive ? 'Deactivate' : 'Activate'}</DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => toggleActive(service)} disabled={isUpdating}>
+                            {isUpdating && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                            {service.isActive ? 'Deactivate' : 'Activate'}
+                            </DropdownMenuItem>
                           <DropdownMenuSeparator />
                            <AlertDialog>
                                 <AlertDialogTrigger asChild>
-                                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()}>Delete Service</DropdownMenuItem>
+                                    <DropdownMenuItem className="text-destructive" onSelect={(e) => e.preventDefault()} disabled={isDeleting}>
+                                        {isDeleting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                                        Delete Service
+                                    </DropdownMenuItem>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
@@ -210,7 +215,7 @@ export default function AdminServicesPage() {
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
                                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction onClick={() => handleDelete(service.id)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
+                                    <AlertDialogAction onClick={() => handleDelete(service._id as string)} className="bg-destructive hover:bg-destructive/90">Delete</AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
                             </AlertDialog>
@@ -218,7 +223,7 @@ export default function AdminServicesPage() {
                       </DropdownMenu>
                     </TableCell>
                   </TableRow>
-                ))}
+                )))}
               </TableBody>
             </Table>
           </CardContent>

@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { CalendarIcon, Check } from "lucide-react";
 import { format } from "date-fns";
+import { useGetServicesQuery, useAddBookingMutation } from "@/lib/api";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -16,12 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Input } from "@/components/ui/input";
-
-const services = [
-  { id: "basic", name: "Basic Wash", price: "₹999" },
-  { id: "deluxe", name: "Deluxe Detail", price: "₹1999" },
-  { id: "premium", name: "Premium Shine", price: "₹2999" },
-];
+import { Skeleton } from "@/components/ui/skeleton";
 
 const timeSlots = [
   "09:00 AM", "10:00 AM", "11:00 AM", "12:00 PM",
@@ -31,30 +27,69 @@ const timeSlots = [
 const bookingFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   phone: z.string().min(10, "Please enter a valid phone number."),
-  service: z.string({ required_error: "Please select a service." }),
+  serviceId: z.string({ required_error: "Please select a service." }),
   date: z.date({ required_error: "A date is required." }),
   time: z.string({ required_error: "Please select a time slot." }),
 });
 
 type BookingFormValues = z.infer<typeof bookingFormSchema>;
 
+function ServiceSelectorSkeleton() {
+    return (
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {Array.from({length: 3}).map((_, i) => (
+                <div key={i} className="p-4 border rounded-md">
+                    <Skeleton className="h-5 w-2/3 mb-2"/>
+                    <Skeleton className="h-4 w-1/3"/>
+                </div>
+            ))}
+        </div>
+    )
+}
+
+
 export function BookingForm() {
-  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const { data: servicesData, isLoading: isLoadingServices } = useGetServicesQuery(undefined);
+  const [addBooking, { isLoading: isBooking }] = useAddBookingMutation();
+  
   const { toast } = useToast();
 
   const form = useForm<BookingFormValues>({
     resolver: zodResolver(bookingFormSchema),
   });
 
-  function onSubmit(data: BookingFormValues) {
-    console.log(data);
-    toast({
-      title: "Booking Confirmed!",
-      description: `Your ${services.find(s=>s.id === data.service)?.name} is booked for ${format(data.date, "PPP")} at ${data.time}.`,
-    });
-    form.reset();
-    setSelectedTime(null);
+  async function onSubmit(data: BookingFormValues) {
+    const selectedService = servicesData?.data.find((s: any) => s._id === data.serviceId);
+    if (!selectedService) return;
+
+    try {
+        await addBooking({
+            serviceId: data.serviceId,
+            date: data.date.toISOString(),
+            time: data.time,
+            amount: selectedService.price,
+            customerDetails: {
+                name: data.name,
+                phone: data.phone,
+            }
+        }).unwrap();
+
+        toast({
+            title: "Booking Confirmed!",
+            description: `Your ${selectedService.name} is booked for ${format(data.date, "PPP")} at ${data.time}.`,
+        });
+        form.reset();
+    } catch(err) {
+         toast({
+            title: "Booking Failed",
+            description: (err as any)?.data?.message || "An unexpected error occurred.",
+            variant: "destructive",
+        });
+    }
   }
+  
+  const activeServices = servicesData?.data.filter((service: any) => service.isActive);
+
 
   return (
     <Card className="shadow-lg">
@@ -95,38 +130,42 @@ export function BookingForm() {
             </div>
             <FormField
               control={form.control}
-              name="service"
+              name="serviceId"
               render={({ field }) => (
                 <FormItem className="space-y-3">
                   <FormLabel>1. Choose your service</FormLabel>
                   <FormControl>
+                    {isLoadingServices ? (
+                        <ServiceSelectorSkeleton />
+                    ) : (
                     <RadioGroup
                       onValueChange={field.onChange}
                       defaultValue={field.value}
                       className="grid grid-cols-1 md:grid-cols-3 gap-4"
                     >
-                      {services.map((service) => (
-                        <FormItem key={service.id}>
+                      {activeServices.map((service: any) => (
+                        <FormItem key={service._id}>
                           <FormControl>
-                            <RadioGroupItem value={service.id} className="sr-only" />
+                            <RadioGroupItem value={service._id} className="sr-only" />
                           </FormControl>
                           <FormLabel className={cn(
                             "flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground cursor-pointer transition-all",
-                            field.value === service.id && "border-primary shadow-md"
+                            field.value === service._id && "border-primary shadow-md"
                           )}>
                             <div className="flex justify-between w-full items-center">
                                 <div>
                                     <p className="font-semibold">{service.name}</p>
-                                    <p className="font-normal text-muted-foreground">{service.price}</p>
+                                    <p className="font-normal text-muted-foreground">₹{service.price}</p>
                                 </div>
-                                <div className={cn("h-6 w-6 flex items-center justify-center rounded-full border", field.value === service.id ? "bg-primary text-primary-foreground border-primary" : "border-muted-foreground ")}>
-                                     {field.value === service.id && <Check className="h-4 w-4" />}
+                                <div className={cn("h-6 w-6 flex items-center justify-center rounded-full border", field.value === service._id ? "bg-primary text-primary-foreground border-primary" : "border-muted-foreground ")}>
+                                     {field.value === service._id && <Check className="h-4 w-4" />}
                                 </div>
                             </div>
                           </FormLabel>
                         </FormItem>
                       ))}
                     </RadioGroup>
+                    )}
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -201,7 +240,10 @@ export function BookingForm() {
                 />
             </div>
             
-            <Button type="submit" size="lg" className="w-full">Book Now</Button>
+            <Button type="submit" size="lg" className="w-full" disabled={isBooking}>
+                {isBooking && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                Book Now
+            </Button>
           </form>
         </Form>
       </CardContent>
