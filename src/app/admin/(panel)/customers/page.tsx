@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -59,8 +60,10 @@ export default function AdminCustomersPage() {
     <div className="flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold tracking-tight">Customers</h1>
-        <Button>
-          <PlusCircle className="mr-2 h-4 w-4" /> Add New Customer
+        <Button asChild>
+          <Link href="/auth/register">
+            <PlusCircle className="mr-2 h-4 w-4" /> Add New Customer
+          </Link>
         </Button>
       </div>
       <Card>

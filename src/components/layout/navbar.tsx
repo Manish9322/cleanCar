@@ -86,6 +86,9 @@ export default function Navbar() {
                 </Link>
             </Button>
             <Button asChild>
+              <Link href="/auth/login">Login</Link>
+            </Button>
+             <Button asChild>
               <Link href="/admin/login">Admin Login</Link>
             </Button>
           </nav>

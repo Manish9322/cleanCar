@@ -205,28 +205,34 @@ export default function HomePage() {
           <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 text-left z-10">
             <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground backdrop-blur-sm">
                 <CardHeader className="flex flex-row items-center gap-4">
-                    <Car className="h-8 w-8 text-background" />
+                    <div className="bg-background/20 p-3 rounded-full">
+                        <Car className="h-6 w-6 text-background" />
+                    </div>
                     <div>
-                        <CardTitle className="text-2xl font-bold">10,000+</CardTitle>
-                        <CardDescription className="text-primary-foreground/80">Cars Washed</CardDescription>
+                        <p className="text-2xl font-bold">10,000+</p>
+                        <p className="text-sm text-primary-foreground/80">Cars Washed</p>
                     </div>
                 </CardHeader>
             </Card>
              <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground backdrop-blur-sm">
                 <CardHeader className="flex flex-row items-center gap-4">
-                    <Users className="h-8 w-8 text-background" />
+                     <div className="bg-background/20 p-3 rounded-full">
+                        <Users className="h-6 w-6 text-background" />
+                    </div>
                     <div>
-                        <CardTitle className="text-2xl font-bold">5,000+</CardTitle>
-                        <CardDescription className="text-primary-foreground/80">Happy Customers</CardDescription>
+                        <p className="text-2xl font-bold">5,000+</p>
+                        <p className="text-sm text-primary-foreground/80">Happy Customers</p>
                     </div>
                 </CardHeader>
             </Card>
              <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground backdrop-blur-sm">
                  <CardHeader className="flex flex-row items-center gap-4">
-                    <TrendingUp className="h-8 w-8 text-background" />
+                    <div className="bg-background/20 p-3 rounded-full">
+                        <TrendingUp className="h-6 w-6 text-background" />
+                    </div>
                     <div>
-                        <CardTitle className="text-2xl font-bold">98%</CardTitle>
-                        <CardDescription className="text-primary-foreground/80">Satisfaction Rate</CardDescription>
+                        <p className="text-2xl font-bold">98%</p>
+                        <p className="text-sm text-primary-foreground/80">Satisfaction Rate</p>
                     </div>
                 </CardHeader>
             </Card>
