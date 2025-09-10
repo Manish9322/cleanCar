@@ -15,12 +15,12 @@ const serviceImages = [
 ];
 
 const galleryImages = [
-  { id: 'gallery-1', src: 'https://picsum.photos/seed/gallery1/800/600', alt: 'Clean sports car', hint: 'sports car' },
-  { id: 'gallery-2', src: 'https://picsum.photos/seed/gallery2/800/600', alt: 'Sparkling clean sedan', hint: 'sedan car' },
-  { id: 'gallery-3', src: 'https://picsum.photos/seed/gallery3/800/600', alt: 'SUV after a wash', hint: 'clean suv' },
-  { id: 'gallery-4', src: 'https://picsum.photos/seed/gallery4/800/600', alt: 'Immaculate car interior', hint: 'car interior' },
-  { id: 'gallery-5', src: 'https://picsum.photos/seed/gallery5/800/600', alt: 'Polished car hood', hint: 'car polish' },
-  { id: 'gallery-6', src: 'https://picsum.photos/seed/gallery6/800/600', alt: 'Another shiny car', hint: 'shiny car' }
+  { id: 'gallery-1', src: 'https://placehold.co/800x600', alt: 'Clean sports car', hint: 'sports car' },
+  { id: 'gallery-2', src: 'https://placehold.co/800x600', alt: 'Sparkling clean sedan', hint: 'sedan car' },
+  { id: 'gallery-3', src: 'https://placehold.co/800x600', alt: 'SUV after a wash', hint: 'clean suv' },
+  { id: 'gallery-4', src: 'https://placehold.co/800x600', alt: 'Immaculate car interior', hint: 'car interior' },
+  { id: 'gallery-5', src: 'https://placehold.co/800x600', alt: 'Polished car hood', hint: 'car polish' },
+  { id: 'gallery-6', src: 'https://placehold.co/800x600', alt: 'Another shiny car', hint: 'shiny car' }
 ]
 
 const services = [
@@ -47,17 +47,17 @@ const services = [
 const testimonials = [
   {
     name: "Sarah L.",
-    avatar: "https://picsum.photos/seed/avatar1/100/100",
+    avatar: "https://placehold.co/100x100",
     text: "My car has never looked better! The attention to detail was incredible. The Premium Shine package is worth every penny. I'll definitely be coming back."
   },
   {
     name: "Mike D.",
-    avatar: "https://picsum.photos/seed/avatar2/100/100",
+    avatar: "https://placehold.co/100x100",
     text: "AquaShine is the best car wash in town. Fast, friendly, and my car looks brand new. The deluxe detail was thorough and left my interior spotless."
   },
   {
     name: "Jessica P.",
-    avatar: "https://picsum.photos/seed/avatar3/100/100",
+    avatar: "https://placehold.co/100x100",
     text: "I was so impressed with the quality of the wash. The staff was professional and courteous. It's so convenient to book online. Highly recommended!"
   }
 ];
@@ -66,19 +66,19 @@ const teamMembers = [
   {
     name: "John Doe",
     role: "Master Detailer",
-    avatar: "https://picsum.photos/seed/team1/200/200",
+    avatar: "https://placehold.co/200x200",
     hint: 'male face'
   },
   {
     name: "Jane Smith",
     role: "Shine Specialist",
-    avatar: "https://picsum.photos/seed/team2/200/200",
+    avatar: "https://placehold.co/200x200",
     hint: 'female face'
   },
   {
     name: "Sam Wilson",
     role: "Lead Technician",
-    avatar: "https://picsum.photos/seed/team3/200/200",
+    avatar: "https://placehold.co/200x200",
     hint: 'male face'
   }
 ];

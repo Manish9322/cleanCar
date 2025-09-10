@@ -74,7 +74,7 @@ export default function AdminPanelLayout({
           <div className="flex items-center gap-4">
               <p className="text-sm font-medium">Admin</p>
             <Avatar className="h-8 w-8">
-              <AvatarImage src="https://picsum.photos/seed/admin-avatar/100/100" alt="Admin" data-ai-hint="person face" />
+              <AvatarImage src="https://placehold.co/100x100" alt="Admin" data-ai-hint="person face" />
               <AvatarFallback>A</AvatarFallback>
             </Avatar>
           </div>

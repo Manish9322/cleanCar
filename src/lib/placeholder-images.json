@@ -3,31 +3,31 @@
     {
       "id": "hero-image",
       "description": "A shiny clean car in a modern setting",
-      "imageUrl": "https://picsum.photos/seed/car-hero/1200/800",
+      "imageUrl": "https://placehold.co/1200x800",
       "imageHint": "clean car"
     },
     {
       "id": "basic-wash",
       "description": "Exterior view of a car being washed",
-      "imageUrl": "https://picsum.photos/seed/basic-wash/600/400",
+      "imageUrl": "https://placehold.co/600x400",
       "imageHint": "car wash"
     },
     {
       "id": "deluxe-detail",
       "description": "Detailed shot of a car's interior after cleaning",
-      "imageUrl": "https://picsum.photos/seed/deluxe-detail/600/400",
+      "imageUrl": "https://placehold.co/600x400",
       "imageHint": "car interior"
     },
     {
       "id": "premium-shine",
       "description": "Close-up of a waxed and polished car surface",
-      "imageUrl": "https://picsum.photos/seed/premium-shine/600/400",
+      "imageUrl": "https://placehold.co/600x400",
       "imageHint": "car wax"
     },
     {
       "id": "about-us-image",
       "description": "The team of car wash professionals",
-      "imageUrl": "https://picsum.photos/seed/team/800/600",
+      "imageUrl": "https://placehold.co/800x600",
       "imageHint": "team working"
     }
   ]
