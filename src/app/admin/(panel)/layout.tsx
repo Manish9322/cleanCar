@@ -1,3 +1,5 @@
+"use client";
+
 import Link from "next/link";
 import {
   Car,
@@ -9,6 +11,9 @@ import {
   MessageSquare,
   Mail,
 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
+
 
 import {
   Sidebar,
@@ -29,6 +34,25 @@ export default function AdminPanelLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+        const response = await fetch('/api/auth/logout', { method: 'POST' });
+        if(response.ok) {
+            toast({ title: 'Logged Out', description: 'You have been successfully logged out.' });
+            router.push('/admin/login');
+            router.refresh();
+        } else {
+            throw new Error('Logout failed');
+        }
+    } catch (error) {
+        toast({ title: 'Logout Failed', description: 'Something went wrong.', variant: 'destructive' });
+    }
+  }
+
+
   return (
     <SidebarProvider>
       <Sidebar>
@@ -87,8 +111,14 @@ export default function AdminPanelLayout({
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/">
+              <SidebarMenuButton onClick={handleLogout}>
                 <LogOut />
+                Logout
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton href="/">
+                <Home />
                 Back to Site
               </SidebarMenuButton>
             </SidebarMenuItem>
