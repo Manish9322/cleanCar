@@ -1,7 +1,12 @@
 import mongoose from 'mongoose';
 
 // A mock MONGODB_URL. In a real application, this should be in an environment variable.
-const MONGODB_URL = process.env.MONGODB_URL || 'mongodb://localhost:27017/aquashine';
+const MONGODB_URL = process.env.MONGODB_URL;
+
+if (!MONGODB_URL) {
+    throw new Error('Please define the MONGODB_URL environment variable inside .env');
+}
+
 
 const connectDB = async () => {
   try {
