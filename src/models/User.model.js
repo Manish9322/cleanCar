@@ -1,3 +1,4 @@
+
 import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema(
@@ -21,6 +22,18 @@ const UserSchema = new mongoose.Schema(
     phone: {
       type: String,
       trim: true,
+    },
+    address: {
+        type: String,
+        trim: true,
+    },
+    vehicleType: {
+        type: String,
+        trim: true,
+    },
+    vehicleNumber: {
+        type: String,
+        trim: true,
     },
     role: {
       type: String,

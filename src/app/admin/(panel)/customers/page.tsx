@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -5,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { MoreHorizontal, PlusCircle } from "lucide-react";
+import { MoreHorizontal, PlusCircle, Car, Phone } from "lucide-react";
 
 const customers = [
   {
@@ -14,8 +15,9 @@ const customers = [
     email: "liam@example.com",
     avatar: "https://picsum.photos/seed/101/100/100",
     joinDate: "2023-10-15",
-    totalBookings: 5,
-    totalSpent: "₹8995",
+    phone: "9876543210",
+    vehicleType: "SUV",
+    vehicleNumber: "NY 01 XY 5678",
   },
   {
     id: "CUST-002",
@@ -23,8 +25,9 @@ const customers = [
     email: "olivia@example.com",
     avatar: "https://picsum.photos/seed/102/100/100",
     joinDate: "2023-11-01",
-    totalBookings: 3,
-    totalSpent: "₹5997",
+    phone: "8765432109",
+    vehicleType: "Sedan",
+    vehicleNumber: "CA 02 AB 1234",
   },
   {
     id: "CUST-003",
@@ -32,8 +35,9 @@ const customers = [
     email: "noah@example.com",
     avatar: "https://picsum.photos/seed/103/100/100",
     joinDate: "2024-01-20",
-    totalBookings: 2,
-    totalSpent: "₹1998",
+    phone: "7654321098",
+    vehicleType: "Hatchback",
+    vehicleNumber: "TX 03 CD 9012",
   },
   {
     id: "CUST-004",
@@ -41,8 +45,9 @@ const customers = [
     email: "emma@example.com",
     avatar: "https://picsum.photos/seed/104/100/100",
     joinDate: "2023-09-05",
-    totalBookings: 8,
-    totalSpent: "₹15992",
+    phone: "6543210987",
+    vehicleType: "SUV",
+    vehicleNumber: "FL 04 EF 3456",
   },
   {
     id: "CUST-005",
@@ -50,8 +55,9 @@ const customers = [
     email: "james@example.com",
     avatar: "https://picsum.photos/seed/105/100/100",
     joinDate: "2024-02-11",
-    totalBookings: 1,
-    totalSpent: "₹2999",
+    phone: "5432109876",
+    vehicleType: "Truck",
+    vehicleNumber: "OH 05 GH 7890",
   },
 ];
 
@@ -69,16 +75,16 @@ export default function AdminCustomersPage() {
       <Card>
         <CardHeader>
           <CardTitle>Customer Management</CardTitle>
-          <CardDescription>View and manage all your customers.</CardDescription>
+          <CardDescription>View and manage all your registered customers.</CardDescription>
         </CardHeader>
         <CardContent>
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Customer</TableHead>
-                <TableHead>Join Date</TableHead>
-                <TableHead className="text-center">Total Bookings</TableHead>
-                <TableHead className="text-right">Total Spent</TableHead>
+                <TableHead className="hidden md:table-cell">Contact</TableHead>
+                <TableHead className="hidden lg:table-cell">Vehicle</TableHead>
+                <TableHead className="hidden lg:table-cell">Join Date</TableHead>
                 <TableHead>
                   <span className="sr-only">Actions</span>
                 </TableHead>
@@ -99,9 +105,22 @@ export default function AdminCustomersPage() {
                       </div>
                     </div>
                   </TableCell>
-                  <TableCell>{customer.joinDate}</TableCell>
-                  <TableCell className="text-center">{customer.totalBookings}</TableCell>
-                  <TableCell className="text-right">{customer.totalSpent}</TableCell>
+                  <TableCell className="hidden md:table-cell">
+                    <div className="flex items-center gap-2">
+                        <Phone className="h-4 w-4 text-muted-foreground"/>
+                        <span>{customer.phone}</span>
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">
+                     <div className="flex items-center gap-2">
+                        <Car className="h-4 w-4 text-muted-foreground"/>
+                        <div>
+                            <div>{customer.vehicleType}</div>
+                            <div className="text-xs text-muted-foreground">{customer.vehicleNumber}</div>
+                        </div>
+                    </div>
+                  </TableCell>
+                  <TableCell className="hidden lg:table-cell">{customer.joinDate}</TableCell>
                   <TableCell>
                     <DropdownMenu>
                       <DropdownMenuTrigger asChild>
