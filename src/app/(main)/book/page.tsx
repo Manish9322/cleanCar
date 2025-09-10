@@ -1,5 +1,5 @@
 import { BookingForm } from "./booking-form";
-import { Car, Clock, ShieldCheck, SprayCan, Droplets, Wind } from "lucide-react";
+import { Car, Clock, ShieldCheck, SprayCan, Droplets, Wind, Sparkles } from "lucide-react";
 
 export default function BookPage() {
   return (
@@ -75,7 +75,7 @@ export default function BookPage() {
             <div className="flex flex-col items-center">
               <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground font-bold text-2xl mb-4">1</div>
               <h3 className="text-xl font-bold">Book Online</h3>
-              <p className="text-muted-foreground mt-2">Choose your desired service, date, and time slot using our simple booking form.</p>
+              <p className="text-muted-foreground mt-2">Choose your desired service, date, and time using our simple booking form.</p>
             </div>
             <div className="flex flex-col items-center">
               <div className="flex items-center justify-center h-16 w-16 rounded-full bg-primary text-primary-foreground font-bold text-2xl mb-4">2</div>
