@@ -4,8 +4,7 @@
 import Link from "next/link";
 import { Car, Menu, User, LogOut } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { use, useEffect, useState } from "react";
-import { headers } from "next/headers";
+import { useEffect, useState } from "react";
 
 
 import { Button } from "@/components/ui/button";
@@ -20,30 +19,6 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-async function logout() {
-    const res = await fetch('/api/auth/logout', { method: 'POST' });
-    return res.ok;
-}
-
-function useUser() {
-    const [user, setUser] = useState<any>(null);
-    const headerList = (typeof window !== 'undefined') ? window.Headers : null;
-
-    useEffect(() => {
-        const userPayload = headerList ? new headerList().get('x-user-payload') : null;
-        if (userPayload) {
-            try {
-                setUser(JSON.parse(userPayload));
-            } catch (e) {
-                console.error("Failed to parse user payload", e);
-                setUser(null);
-            }
-        }
-    }, [headerList]);
-    return user;
-}
-
-
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -51,8 +26,7 @@ export default function Navbar() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // A simple check if the cookie exists. For a real app, you might decode it.
-    // This runs on the client-side
+    // A simple check if the cookie exists. This runs on the client-side
     if (typeof window !== 'undefined') {
         const token = document.cookie.split('; ').find(row => row.startsWith('auth_token='));
         setIsAuthenticated(!!token);

@@ -7,7 +7,6 @@ import { cn } from '@/lib/utils';
 import { Toaster } from "@/components/ui/toaster";
 import { Provider } from 'react-redux';
 import { store } from '@/lib/store';
-import { headers } from 'next/headers';
 
 // export const metadata: Metadata = {
 //   title: 'AquaShine',
@@ -19,9 +18,6 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const headerList = headers();
-  const userPayload = headerList.get('x-user-payload');
-  
   return (
     <html lang="en" className="dark">
       <head>
@@ -30,7 +26,6 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-        {userPayload && <meta name="x-user-payload" content={userPayload} />}
       </head>
       <body className={cn('font-body antialiased min-h-screen bg-background')}>
         <Provider store={store}>
