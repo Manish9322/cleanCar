@@ -101,7 +101,7 @@ export default function HomePage() {
       </section>
 
       <section id="services" className="py-12 md:py-24">
-        <div className="container max-w-7xl">
+        <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Our Services</h2>
             <p className="mt-2 text-lg text-muted-foreground">
@@ -136,7 +136,7 @@ export default function HomePage() {
       </section>
       
       <section id="testimonials" className="py-12 md:py-24 bg-muted">
-        <div className="container max-w-7xl">
+        <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">What Our Customers Say</h2>
             <p className="mt-2 text-lg text-muted-foreground">
@@ -165,7 +165,7 @@ export default function HomePage() {
       </section>
 
       <section id="gallery" className="py-12 md:py-24">
-        <div className="container max-w-7xl">
+        <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Our Work</h2>
             <p className="mt-2 text-lg text-muted-foreground">
@@ -205,7 +205,7 @@ export default function HomePage() {
       </section>
 
       <section id="team" className="py-12 md:py-24 bg-muted">
-        <div className="container max-w-7xl">
+        <div className="container max-w-7xl mx-auto">
            <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Meet the Team</h2>
             <p className="mt-2 text-lg text-muted-foreground">
