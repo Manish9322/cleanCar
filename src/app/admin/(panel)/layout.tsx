@@ -5,6 +5,8 @@ import {
   LogOut,
   Settings,
   BookCopy,
+  Users,
+  MessageSquare,
 } from "lucide-react";
 
 import {
@@ -49,10 +51,28 @@ export default function AdminPanelLayout({
                 Bookings
               </SidebarMenuButton>
             </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton href="/admin/customers">
+                <Users />
+                Customers
+              </SidebarMenuButton>
+            </SidebarMenuItem>
             <SidebarMenuItem>
               <SidebarMenuButton href="/admin/services">
                 <Settings />
                 Services
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton href="/admin/feedback">
+                <MessageSquare />
+                Feedback
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+             <SidebarMenuItem>
+              <SidebarMenuButton href="/admin/settings">
+                <Settings />
+                Settings
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>

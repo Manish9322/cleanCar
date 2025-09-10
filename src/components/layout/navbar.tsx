@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Car, Menu } from "lucide-react";
+import { Car, Menu, User } from "lucide-react";
 import { usePathname } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -72,7 +72,19 @@ export default function Navbar() {
               </SheetContent>
             </Sheet>
           </div>
+           <div className="w-full flex-1 md:w-auto md:flex-none">
+             <Link href="/" className="flex items-center space-x-2 md:hidden">
+                  <Car className="h-6 w-6" />
+                  <span className="font-bold">AquaShine</span>
+                </Link>
+           </div>
           <nav className="flex items-center gap-2">
+            <Button asChild variant="secondary">
+                <Link href="/user/profile">
+                    <User className="mr-2 h-4 w-4"/>
+                    My Account
+                </Link>
+            </Button>
             <Button asChild>
               <Link href="/admin/login">Admin Login</Link>
             </Button>

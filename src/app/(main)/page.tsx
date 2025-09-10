@@ -10,7 +10,15 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Award, Car, Facebook, Instagram, Linkedin, Star, Twitter, Users, TrendingUp } from "lucide-react";
+import { Award, Car, Facebook, Instagram, Linkedin, Star, Twitter, Users, TrendingUp, MessageSquare } from "lucide-react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useToast } from "@/hooks/use-toast";
+
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
 const serviceImages = [
@@ -91,6 +99,90 @@ const teamMembers = [
   }
 ];
 
+const feedbackFormSchema = z.object({
+  name: z.string().min(2, "Name must be at least 2 characters."),
+  email: z.string().email("Please enter a valid email address."),
+  feedback: z.string().min(10, "Feedback must be at least 10 characters."),
+});
+
+type FeedbackFormValues = z.infer<typeof feedbackFormSchema>;
+
+
+function FeedbackForm() {
+    const { toast } = useToast();
+    const form = useForm<FeedbackFormValues>({
+      resolver: zodResolver(feedbackFormSchema),
+      defaultValues: { name: "", email: "", feedback: "" },
+    });
+
+    function onSubmit(data: FeedbackFormValues) {
+        console.log(data);
+        toast({
+        title: "Feedback Submitted!",
+        description: "Thank you for sharing your thoughts with us.",
+        });
+        form.reset();
+    }
+    
+    return (
+        <Card className="max-w-2xl mx-auto">
+            <CardHeader>
+                <CardTitle>Share Your Feedback</CardTitle>
+                <CardDescription>We value your opinion. Let us know how we're doing.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <FormField
+                                control={form.control}
+                                name="name"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Full Name</FormLabel>
+                                    <FormControl>
+                                    <Input placeholder="John Doe" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email Address</FormLabel>
+                                    <FormControl>
+                                    <Input placeholder="you@example.com" {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                                )}
+                            />
+                        </div>
+                        <FormField
+                            control={form.control}
+                            name="feedback"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Feedback</FormLabel>
+                                <FormControl>
+                                <Textarea placeholder="Tell us what you think..." {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <Button type="submit" className="w-full">Submit Feedback</Button>
+                    </form>
+                </Form>
+            </CardContent>
+        </Card>
+    )
+}
+
+
 export default function HomePage() {
   const [selectedImage, setSelectedImage] = useState<typeof galleryImages[0] | null>(null);
   
@@ -99,11 +191,11 @@ export default function HomePage() {
       <section className="w-full bg-primary overflow-hidden">
         <div className="container flex flex-col items-center justify-center text-center text-primary-foreground p-8 md:p-16 relative">
            <div className="absolute top-0 left-0 w-full h-full bg-grid-white/[0.05] z-0" />
-           <div className="z-10">
+           <div className="z-10 max-w-7xl mx-auto">
             <h1 className="text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl font-headline">
               The Ultimate Shine for Your Ride
             </h1>
-            <p className="mt-4 max-w-2xl text-lg md:text-xl text-primary-foreground/80">
+            <p className="mt-4 max-w-2xl mx-auto text-lg md:text-xl text-primary-foreground/80">
               Experience the best car wash in town. We treat every car like our own, using premium products to deliver a showroom finish, every time.
             </p>
             <Button asChild size="lg" className="mt-8 bg-background text-foreground hover:bg-background/90">
@@ -357,6 +449,12 @@ export default function HomePage() {
               </AccordionContent>
             </AccordionItem>
           </Accordion>
+        </div>
+      </section>
+
+      <section id="feedback" className="py-12 md:py-24 bg-muted">
+        <div className="container max-w-7xl mx-auto">
+            <FeedbackForm />
         </div>
       </section>
 
