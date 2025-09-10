@@ -1,4 +1,5 @@
 
+
 "use client";
 
 import Image from "next/image";
@@ -19,7 +20,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { useAddFeedbackMutation } from "@/lib/api";
+import { useAddFeedbackMutation, useGetFeedbackQuery, useGetServicesQuery } from "@/lib/api";
+import { cn } from "@/lib/utils";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
@@ -36,45 +39,6 @@ const galleryImages = [
   PlaceHolderImages.find(p => p.id === 'gallery-4'),
   PlaceHolderImages.find(p => p.id === 'gallery-5'),
   PlaceHolderImages.find(p => p.id === 'gallery-6')
-];
-
-const services = [
-  {
-    title: "Basic Wash",
-    description: "A quick and efficient exterior wash to make your car sparkle.",
-    price: "₹999",
-    image: serviceImages[0],
-  },
-  {
-    title: "Deluxe Detail",
-    description: "Complete interior and exterior cleaning for a showroom look.",
-    price: "₹1999",
-    image: serviceImages[1],
-  },
-  {
-    title: "Premium Shine",
-    description: "Our best package, including wax and polish for ultimate protection.",
-    price: "₹2999",
-    image: serviceImages[2],
-  },
-];
-
-const testimonials = [
-  {
-    name: "Sarah L.",
-    avatar: "https://picsum.photos/seed/101/100/100",
-    text: "My car has never looked better! The attention to detail was incredible. The Premium Shine package is worth every penny. I'll definitely be coming back."
-  },
-  {
-    name: "Mike D.",
-    avatar: "https://picsum.photos/seed/102/100/100",
-    text: "AquaShine is the best car wash in town. Fast, friendly, and my car looks brand new. The deluxe detail was thorough and left my interior spotless."
-  },
-  {
-    name: "Jessica P.",
-    avatar: "https://picsum.photos/seed/103/100/100",
-    text: "I was so impressed with the quality of the wash. The staff was professional and courteous. It's so convenient to book online. Highly recommended!"
-  }
 ];
 
 const teamMembers = [
@@ -105,6 +69,7 @@ const feedbackFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
   email: z.string().email("Please enter a valid email address."),
   feedback: z.string().min(10, "Feedback must be at least 10 characters."),
+  rating: z.coerce.number().min(1).max(5),
 });
 
 type FeedbackFormValues = z.infer<typeof feedbackFormSchema>;
@@ -116,7 +81,7 @@ function FeedbackForm() {
 
     const form = useForm<FeedbackFormValues>({
       resolver: zodResolver(feedbackFormSchema),
-      defaultValues: { name: "", email: "", feedback: "" },
+      defaultValues: { name: "", email: "", feedback: "", rating: 5 },
     });
 
     async function onSubmit(data: FeedbackFormValues) {
@@ -175,6 +140,34 @@ function FeedbackForm() {
                         </div>
                         <FormField
                             control={form.control}
+                            name="rating"
+                            render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Your Rating</FormLabel>
+                                <FormControl>
+                                  <RadioGroup 
+                                    onValueChange={(val) => field.onChange(Number(val))} 
+                                    defaultValue={String(field.value)}
+                                    className="flex items-center gap-2"
+                                  >
+                                      {[1, 2, 3, 4, 5].map((rating) => (
+                                        <FormItem key={rating} className="flex items-center space-x-1 space-y-0">
+                                            <FormControl>
+                                                <RadioGroupItem value={String(rating)} id={`rating-${rating}`} className="sr-only"/>
+                                            </FormControl>
+                                            <FormLabel htmlFor={`rating-${rating}`} className="cursor-pointer">
+                                                <Star className={cn("h-7 w-7 transition-colors", field.value >= rating ? "text-yellow-400 fill-yellow-400" : "text-muted-foreground/50 hover:text-yellow-400")} />
+                                            </FormLabel>
+                                        </FormItem>
+                                      ))}
+                                  </RadioGroup>
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
                             name="feedback"
                             render={({ field }) => (
                             <FormItem>
@@ -200,7 +193,12 @@ function FeedbackForm() {
 
 export default function HomePage() {
   const [selectedImage, setSelectedImage] = useState<typeof galleryImages[0] | null>(null);
+  const { data: servicesData } = useGetServicesQuery(undefined);
+  const services = servicesData?.data || [];
   
+  const { data: feedbackData } = useGetFeedbackQuery(undefined);
+  const testimonials = feedbackData?.data.filter((f: any) => f.status === 'Published') || [];
+
   return (
     <div className="flex flex-col">
       <section className="w-full bg-primary overflow-hidden">
@@ -286,23 +284,23 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
-            {services.map((service) => (
-              <Link href="/book" key={service.title} className="block">
+            {services.map((service: any, index: number) => (
+              <Link href="/book" key={service._id} className="block">
                 <Card className="flex flex-col overflow-hidden transition-shadow hover:shadow-lg h-full">
-                  {service.image && (
+                  {serviceImages[index] && (
                      <div className="relative h-64 w-full">
                       <Image
-                        src={service.image.imageUrl}
-                        alt={service.image.description}
-                        data-ai-hint={service.image.imageHint}
+                        src={serviceImages[index]!.imageUrl}
+                        alt={serviceImages[index]!.description}
+                        data-ai-hint={serviceImages[index]!.imageHint}
                         fill
                         className="object-cover"
                       />
                     </div>
                   )}
                   <CardHeader>
-                    <CardTitle>{service.title}</CardTitle>
-                    <CardDescription className="text-2xl font-bold text-primary">{service.price}</CardDescription>
+                    <CardTitle>{service.name}</CardTitle>
+                    <CardDescription className="text-2xl font-bold text-primary">₹{service.price}</CardDescription>
                   </CardHeader>
                   <CardContent className="flex-1">
                     <p className="text-muted-foreground">{service.description}</p>
@@ -314,7 +312,7 @@ export default function HomePage() {
         </div>
       </section>
       
-      <section id="testimonials" className="py-12 md:py-24 bg-muted">
+      <section id="testimonials" className="py-12 md:py-24 bg-muted overflow-hidden">
         <div className="container max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">What Our Customers Say</h2>
@@ -322,27 +320,33 @@ export default function HomePage() {
               Hear from our happy clients.
             </p>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial) => (
-              <Card key={testimonial.name}>
-                <CardContent className="pt-6">
-                  <div className="flex items-center mb-4">
-                    <Avatar className="h-12 w-12 mr-4">
-                      <AvatarImage src={testimonial.avatar} alt={testimonial.name} data-ai-hint="person face" />
-                      <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <p className="font-semibold">{testimonial.name}</p>
-                       <div className="flex text-yellow-500">
-                          <Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" />
-                       </div>
-                    </div>
-                  </div>
-                  <p className="text-muted-foreground italic">"{testimonial.text}"</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
+           {testimonials && testimonials.length > 0 && (
+             <div className="relative">
+                <div className="flex animate-marquee-slow gap-6" style={{ animationDuration: `${testimonials.length * 5}s`}}>
+                    {[...testimonials, ...testimonials].map((testimonial: any, index: number) => (
+                    <Card key={`${testimonial._id}-${index}`} className="w-[350px] shrink-0">
+                        <CardContent className="pt-6">
+                        <div className="flex items-center mb-4">
+                            <Avatar className="h-12 w-12 mr-4">
+                            <AvatarImage src={`https://picsum.photos/seed/${testimonial._id}/100/100`} alt={testimonial.name} data-ai-hint="person face" />
+                            <AvatarFallback>{testimonial.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                            <div>
+                            <p className="font-semibold">{testimonial.name}</p>
+                            <div className="flex text-yellow-400">
+                                {Array.from({length: testimonial.rating || 5}).map((_, i) => <Star key={i} className="h-4 w-4 fill-current" />)}
+                            </div>
+                            </div>
+                        </div>
+                        <p className="text-muted-foreground italic line-clamp-4">"{testimonial.feedback}"</p>
+                        </CardContent>
+                    </Card>
+                    ))}
+                </div>
+                <div className="pointer-events-none absolute inset-y-0 left-0 w-1/6 bg-gradient-to-r from-muted to-transparent"></div>
+                <div className="pointer-events-none absolute inset-y-0 right-0 w-1/6 bg-gradient-to-l from-muted to-transparent"></div>
+            </div>
+           )}
         </div>
       </section>
 
@@ -364,15 +368,15 @@ export default function HomePage() {
               >
                 <CarouselContent>
                   {galleryImages.map((image) => (
-                    <CarouselItem key={image.id} className="md:basis-1/2 lg:basis-1/3">
+                    <CarouselItem key={image!.id} className="md:basis-1/2 lg:basis-1/3">
                       <div className="p-1">
                         <DialogTrigger asChild onClick={() => setSelectedImage(image)}>
                             <Card className="overflow-hidden cursor-pointer">
                               <div className="relative aspect-video">
                                 <Image
-                                  src={image.imageUrl}
-                                  alt={image.description}
-                                  data-ai-hint={image.imageHint}
+                                  src={image!.imageUrl}
+                                  alt={image!.description}
+                                  data-ai-hint={image!.imageHint}
                                   fill
                                   className="object-cover transition-transform hover:scale-105"
                                 />
