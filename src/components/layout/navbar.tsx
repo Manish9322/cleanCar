@@ -2,7 +2,7 @@
 "use client";
 
 import Link from "next/link";
-import { Car, Menu, User, LogOut } from "lucide-react";
+import { Car, Menu, User, LogOut, LogIn } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -121,18 +121,13 @@ export default function Navbar() {
                     </Button>
                 </>
             ) : (
-                 <>
-                    <Button asChild>
-                        <Link href="/auth/login">Login</Link>
-                    </Button>
-                     <Button asChild variant="secondary">
-                        <Link href="/auth/register">Register</Link>
-                    </Button>
-                </>
+                <Button asChild variant="ghost" size="icon">
+                    <Link href="/auth/login">
+                        <LogIn className="h-5 w-5" />
+                        <span className="sr-only">Login</span>
+                    </Link>
+                </Button>
             )}
-             <Button asChild>
-              <Link href="/admin/login">Admin Login</Link>
-            </Button>
           </nav>
         </div>
       </div>
