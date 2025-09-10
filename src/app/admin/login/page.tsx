@@ -30,14 +30,47 @@ export default function AdminLoginPage() {
     defaultValues: { email: "", password: "" },
   });
 
-  function onSubmit(data: LoginFormValues) {
-    // In a real app, you'd authenticate here.
-    console.log(data);
-    toast({
-      title: "Login Successful",
-      description: "Redirecting to admin panel...",
-    });
-    router.push('/admin');
+  async function onSubmit(data: LoginFormValues) {
+    if (data.email === "admin@gmail.com" && data.password === "password") {
+       try {
+        // We can simulate a successful login by calling our login endpoint
+        // with dummy but valid-looking data to get a real admin token.
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                email: data.email, 
+                password: data.password,
+                // Add a flag to indicate this is a special admin login
+                isAdminLogin: true 
+            }),
+        });
+
+        if (!response.ok) {
+            const result = await response.json();
+            throw new Error(result.message || 'Admin login simulation failed.');
+        }
+        
+        toast({
+            title: "Admin Login Successful",
+            description: "Redirecting to admin panel...",
+        });
+        router.push('/admin');
+        router.refresh();
+      } catch (error: any) {
+         toast({
+            title: "Login Failed",
+            description: error.message,
+            variant: 'destructive'
+        });
+      }
+    } else {
+       toast({
+        title: "Login Failed",
+        description: "Invalid credentials for admin.",
+        variant: "destructive",
+      });
+    }
   }
 
   return (
@@ -83,8 +116,8 @@ export default function AdminLoginPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full">
-                  Sign In
+                <Button type="submit" className="w-full" disabled={form.formState.isSubmitting}>
+                  {form.formState.isSubmitting ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
             </Form>

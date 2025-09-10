@@ -11,13 +11,35 @@ const MAX_AGE = 60 * 60 * 24 * 7; // 1 week
 
 export async function POST(request) {
   try {
-    await connectDB();
     const body = await request.json();
-    const { email, password } = body;
+    const { email, password, isAdminLogin } = body;
 
     if (!email || !password) {
       return NextResponse.json({ success: false, message: 'Email and password are required' }, { status: 400 });
     }
+    
+    // Handle special hardcoded admin login
+    if (isAdminLogin && email === 'admin@gmail.com' && password === 'password') {
+        const token = jwt.sign(
+          { userId: 'admin-hardcoded', email: 'admin@gmail.com', role: 'admin' },
+          JWT_SECRET,
+          { expiresIn: '7d' }
+        );
+
+        const cookie = serialize(TOKEN_NAME, token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV !== 'development',
+            maxAge: MAX_AGE,
+            path: '/',
+        });
+
+        const response = NextResponse.json({ success: true, message: "Admin logged in successfully" });
+        response.headers.set('Set-Cookie', cookie);
+        return response;
+    }
+
+
+    await connectDB();
 
     const user = await User.findOne({ email });
     if (!user) {
