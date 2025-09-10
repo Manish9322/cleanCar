@@ -38,19 +38,19 @@ export default function AdminPanelLayout({
         <SidebarContent>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton href="/admin" isActive>
+              <SidebarMenuButton href="/admin">
                 <Home />
                 Dashboard
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#">
+              <SidebarMenuButton href="/admin/bookings">
                 <BookCopy />
                 Bookings
               </SidebarMenuButton>
             </SidebarMenuItem>
             <SidebarMenuItem>
-              <SidebarMenuButton href="#">
+              <SidebarMenuButton href="/admin/services">
                 <Settings />
                 Services
               </SidebarMenuButton>
@@ -74,7 +74,7 @@ export default function AdminPanelLayout({
           <div className="flex items-center gap-4">
               <p className="text-sm font-medium">Admin</p>
             <Avatar className="h-8 w-8">
-              <AvatarImage src="https://placehold.co/100x100" alt="Admin" data-ai-hint="person face" />
+              <AvatarImage src="https://picsum.photos/seed/100/100/100" alt="Admin" data-ai-hint="person face" />
               <AvatarFallback>A</AvatarFallback>
             </Avatar>
           </div>

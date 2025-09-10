@@ -3,32 +3,74 @@
     {
       "id": "hero-image",
       "description": "A shiny clean car in a modern setting",
-      "imageUrl": "https://placehold.co/1200x800",
+      "imageUrl": "https://picsum.photos/seed/1/1200/800",
       "imageHint": "clean car"
     },
     {
       "id": "basic-wash",
       "description": "Exterior view of a car being washed",
-      "imageUrl": "https://placehold.co/600x400",
+      "imageUrl": "https://picsum.photos/seed/2/600/400",
       "imageHint": "car wash"
     },
     {
       "id": "deluxe-detail",
       "description": "Detailed shot of a car's interior after cleaning",
-      "imageUrl": "https://placehold.co/600x400",
+      "imageUrl": "https://picsum.photos/seed/3/600/400",
       "imageHint": "car interior"
     },
     {
       "id": "premium-shine",
       "description": "Close-up of a waxed and polished car surface",
-      "imageUrl": "https://placehold.co/600x400",
+      "imageUrl": "https://picsum.photos/seed/4/600/400",
       "imageHint": "car wax"
     },
     {
       "id": "about-us-image",
       "description": "The team of car wash professionals",
-      "imageUrl": "https://placehold.co/800x600",
+      "imageUrl": "https://picsum.photos/seed/5/800/600",
       "imageHint": "team working"
+    },
+    {
+      "id": "our-process-image",
+      "description": "Car detailing process",
+      "imageUrl": "https://picsum.photos/seed/11/800/600",
+      "imageHint": "car detailing"
+    },
+    {
+      "id": "gallery-1",
+      "description": "Clean sports car",
+      "imageUrl": "https://picsum.photos/seed/6/800/600",
+      "imageHint": "sports car"
+    },
+    {
+      "id": "gallery-2",
+      "description": "Sparkling clean sedan",
+      "imageUrl": "https://picsum.photos/seed/7/800/600",
+      "imageHint": "sedan car"
+    },
+    {
+      "id": "gallery-3",
+      "description": "SUV after a wash",
+      "imageUrl": "https://picsum.photos/seed/8/800/600",
+      "imageHint": "clean suv"
+    },
+    {
+      "id": "gallery-4",
+      "description": "Immaculate car interior",
+      "imageUrl": "https://picsum.photos/seed/9/800/600",
+      "imageHint": "car interior"
+    },
+    {
+      "id": "gallery-5",
+      "description": "Polished car hood",
+      "imageUrl": "https://picsum.photos/seed/10/800/600",
+      "imageHint": "car polish"
+    },
+    {
+      "id": "gallery-6",
+      "description": "Another shiny car",
+      "imageUrl": "https://picsum.photos/seed/12/800/600",
+      "imageHint": "shiny car"
     }
   ]
 }

@@ -1,9 +1,12 @@
 import Image from "next/image";
-import { Award, Target, Users } from "lucide-react";
+import { Award, Target, Users, ShieldCheck, Leaf, Sparkles, Heart } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const aboutImage = PlaceHolderImages.find(p => p.id === 'about-us-image');
+const ourProcessImage = PlaceHolderImages.find(p => p.id === 'our-process-image');
 
 export default function AboutPage() {
   return (
@@ -44,6 +47,13 @@ export default function AboutPage() {
           </div>
         </div>
         
+        <div className="mt-24 text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Our Mission & Vision</h2>
+            <p className="mt-2 text-lg text-muted-foreground max-w-3xl mx-auto">
+                To redefine excellence in car care by providing unparalleled service, using eco-friendly products, and creating a community of proud car owners. We envision a future where every car on the road reflects the care and pride of its owner.
+            </p>
+        </div>
+        
         <div className="mt-24">
            <div className="text-center mb-12">
               <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Our Values</h2>
@@ -81,6 +91,74 @@ export default function AboutPage() {
             </Card>
           </div>
         </div>
+
+        <section id="why-choose-us" className="py-12 md:py-24">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Why Choose AquaShine?</h2>
+            <p className="mt-2 text-lg text-muted-foreground">
+              What sets us apart from the competition.
+            </p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-primary/10 p-4 rounded-full mb-4"><Sparkles className="w-8 h-8 text-primary"/></div>
+              <h3 className="text-xl font-bold">Impeccable Finish</h3>
+              <p className="text-muted-foreground mt-2">Our detailing experts ensure a showroom-quality shine, every single time.</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+               <div className="bg-primary/10 p-4 rounded-full mb-4"><Leaf className="w-8 h-8 text-primary"/></div>
+              <h3 className="text-xl font-bold">Eco-Friendly Products</h3>
+              <p className="text-muted-foreground mt-2">We use biodegradable and water-saving products to protect our planet.</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+               <div className="bg-primary/10 p-4 rounded-full mb-4"><ShieldCheck className="w-8 h-8 text-primary"/></div>
+              <h3 className="text-xl font-bold">Satisfaction Guarantee</h3>
+              <p className="text-muted-foreground mt-2">If you're not 100% satisfied, we'll make it right. That's our promise to you.</p>
+            </div>
+             <div className="flex flex-col items-center text-center">
+               <div className="bg-primary/10 p-4 rounded-full mb-4"><Heart className="w-8 h-8 text-primary"/></div>
+              <h3 className="text-xl font-bold">Passionate Team</h3>
+              <p className="text-muted-foreground mt-2">We're car lovers too. We treat every vehicle with the same passion and care as our own.</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="py-12 md:py-24 bg-muted rounded-lg">
+          <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="px-8">
+              {ourProcessImage && (
+                <Image
+                  src={ourProcessImage.imageUrl}
+                  alt={ourProcessImage.description}
+                  data-ai-hint={ourProcessImage.imageHint}
+                  width={800}
+                  height={600}
+                  className="rounded-lg shadow-lg"
+                />
+              )}
+            </div>
+            <div className="space-y-6 px-8">
+              <h2 className="text-3xl font-bold font-headline">Our Process</h2>
+              <ol className="list-decimal list-inside space-y-4 text-muted-foreground">
+                <li><span className="font-semibold text-foreground">Consultation:</span> We start by understanding your car's specific needs.</li>
+                <li><span className="font-semibold text-foreground">Pre-Wash:</span> Gentle removal of loose dirt and grime to prevent scratches.</li>
+                <li><span className="font-semibold text-foreground">Detailed Hand Wash:</span> Using the two-bucket method and pH-neutral shampoos.</li>
+                <li><span className="font-semibold text-foreground">Drying & Finishing:</span> Safe drying techniques followed by application of protective waxes or sealants.</li>
+                 <li><span className="font-semibold text-foreground">Final Inspection:</span> A rigorous quality check to ensure perfection.</li>
+              </ol>
+            </div>
+          </div>
+        </section>
+
+         <section id="cta" className="py-12 md:py-24 text-center">
+           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Join the AquaShine Family</h2>
+            <p className="mt-2 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Ready to give your car the treatment it deserves? Book a service with us today and see the AquaShine difference for yourself.
+            </p>
+           <Button asChild size="lg" className="mt-8">
+            <Link href="/book">Book an Appointment</Link>
+          </Button>
+        </section>
       </div>
     </>
   );

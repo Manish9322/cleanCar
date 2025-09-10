@@ -3,7 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Mail, Phone, MapPin } from "lucide-react";
+import { Mail, Phone, MapPin, Clock } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,6 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
+import { Facebook, Instagram, Twitter } from "lucide-react";
 
 const contactFormSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters."),
@@ -79,6 +81,16 @@ export default function ContactPage() {
                 <p className="text-muted-foreground">contact@aquashine.com</p>
               </div>
             </div>
+             <div className="flex items-start gap-4">
+              <div className="bg-primary text-primary-foreground p-3 rounded-md">
+                <Clock className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="text-xl font-semibold">Business Hours</h3>
+                <p className="text-muted-foreground">Monday - Saturday: 9:00 AM - 5:00 PM</p>
+                <p className="text-muted-foreground">Sunday: Closed</p>
+              </div>
+            </div>
           </div>
 
           <Card>
@@ -135,6 +147,49 @@ export default function ContactPage() {
           </Card>
         </div>
       </div>
+
+       <section className="py-12 md:py-24 bg-muted">
+        <div className="container max-w-7xl mx-auto text-center">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Find Us on a Map</h2>
+            <p className="mt-2 text-lg text-muted-foreground mb-8">
+             Visit our location for a personal consultation.
+            </p>
+            <div className="aspect-video w-full rounded-lg overflow-hidden border">
+               <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.2258282329303!2d-122.4206795846816!3d37.7843799797585!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x80858097f227a941%3A0x1d32a0c64bce2283!2sSan%20Francisco%20City%20Hall!5e0!3m2!1sen!2sus!4v1684497444288!5m2!1sen!2sus"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen={false}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              ></iframe>
+            </div>
+        </div>
+      </section>
+
+       <section className="py-12 md:py-24">
+        <div className="container max-w-7xl mx-auto text-center">
+             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl font-headline">Follow Us Online</h2>
+              <p className="mt-2 text-lg text-muted-foreground mb-8">
+                Stay up to date with our latest news, offers, and shiny car photos!
+              </p>
+               <div className="flex justify-center items-center space-x-6">
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Twitter className="h-8 w-8" />
+                  <span className="sr-only">Twitter</span>
+                </Link>
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Facebook className="h-8 w-8" />
+                  <span className="sr-only">Facebook</span>
+                </Link>
+                <Link href="#" className="text-muted-foreground hover:text-primary transition-colors">
+                  <Instagram className="h-8 w-8" />
+                  <span className="sr-only">Instagram</span>
+                </Link>
+              </div>
+        </div>
+      </section>
     </>
   );
 }

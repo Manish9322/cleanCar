@@ -10,7 +10,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Award, Car, Facebook, Instagram, Linkedin, Star, Twitter, Users } from "lucide-react";
+import { Award, Car, Facebook, Instagram, Linkedin, Star, Twitter, Users, TrendingUp } from "lucide-react";
 
 const heroImage = PlaceHolderImages.find(p => p.id === 'hero-image');
 const serviceImages = [
@@ -20,13 +20,13 @@ const serviceImages = [
 ];
 
 const galleryImages = [
-  { id: 'gallery-1', src: 'https://placehold.co/800x600', alt: 'Clean sports car', hint: 'sports car' },
-  { id: 'gallery-2', src: 'https://placehold.co/800x600', alt: 'Sparkling clean sedan', hint: 'sedan car' },
-  { id: 'gallery-3', src: 'https://placehold.co/800x600', alt: 'SUV after a wash', hint: 'clean suv' },
-  { id: 'gallery-4', src: 'https://placehold.co/800x600', alt: 'Immaculate car interior', hint: 'car interior' },
-  { id: 'gallery-5', src: 'https://placehold.co/800x600', alt: 'Polished car hood', hint: 'car polish' },
-  { id: 'gallery-6', src: 'https://placehold.co/800x600', alt: 'Another shiny car', hint: 'shiny car' }
-]
+  PlaceHolderImages.find(p => p.id === 'gallery-1'),
+  PlaceHolderImages.find(p => p.id === 'gallery-2'),
+  PlaceHolderImages.find(p => p.id === 'gallery-3'),
+  PlaceHolderImages.find(p => p.id === 'gallery-4'),
+  PlaceHolderImages.find(p => p.id === 'gallery-5'),
+  PlaceHolderImages.find(p => p.id === 'gallery-6')
+];
 
 const services = [
   {
@@ -52,17 +52,17 @@ const services = [
 const testimonials = [
   {
     name: "Sarah L.",
-    avatar: "https://placehold.co/100x100",
+    avatar: "https://picsum.photos/seed/101/100/100",
     text: "My car has never looked better! The attention to detail was incredible. The Premium Shine package is worth every penny. I'll definitely be coming back."
   },
   {
     name: "Mike D.",
-    avatar: "https://placehold.co/100x100",
+    avatar: "https://picsum.photos/seed/102/100/100",
     text: "AquaShine is the best car wash in town. Fast, friendly, and my car looks brand new. The deluxe detail was thorough and left my interior spotless."
   },
   {
     name: "Jessica P.",
-    avatar: "https://placehold.co/100x100",
+    avatar: "https://picsum.photos/seed/103/100/100",
     text: "I was so impressed with the quality of the wash. The staff was professional and courteous. It's so convenient to book online. Highly recommended!"
   }
 ];
@@ -72,21 +72,21 @@ const teamMembers = [
     name: "John Doe",
     role: "Master Detailer",
     bio: "With over 10 years of experience, John is the heart of our detailing operations, ensuring every car leaves looking its absolute best.",
-    avatar: "https://placehold.co/200x200",
+    avatar: "https://picsum.photos/seed/104/200/200",
     hint: 'male face'
   },
   {
     name: "Jane Smith",
     role: "Shine Specialist",
     bio: "Jane's passion for perfection and expertise in polishing and waxing guarantees a mirror-like finish on every vehicle.",
-    avatar: "https://placehold.co/200x200",
+    avatar: "https://picsum.photos/seed/105/200/200",
     hint: 'female face'
   },
   {
     name: "Sam Wilson",
     role: "Lead Technician",
     bio: "Sam leads our team of technicians with a focus on efficiency, quality, and pioneering new car care techniques.",
-    avatar: "https://placehold.co/200x200",
+    avatar: "https://picsum.photos/seed/106/200/200",
     hint: 'male face'
   }
 ];
@@ -111,25 +111,31 @@ export default function HomePage() {
             </Button>
           </div>
           <div className="w-full max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 mt-16 text-left z-10">
-            <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
-                <CardHeader>
+            <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground backdrop-blur-sm">
+                <CardHeader className="flex flex-row items-center gap-4">
                     <Car className="h-8 w-8 text-background" />
-                    <CardTitle className="text-2xl font-bold">10,000+</CardTitle>
-                    <CardDescription className="text-primary-foreground/80">Cars Washed & Detailed</CardDescription>
+                    <div>
+                        <CardTitle className="text-2xl font-bold">10,000+</CardTitle>
+                        <CardDescription className="text-primary-foreground/80">Cars Washed</CardDescription>
+                    </div>
                 </CardHeader>
             </Card>
-             <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
-                <CardHeader>
+             <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground backdrop-blur-sm">
+                <CardHeader className="flex flex-row items-center gap-4">
                     <Users className="h-8 w-8 text-background" />
-                    <CardTitle className="text-2xl font-bold">5,000+</CardTitle>
-                    <CardDescription className="text-primary-foreground/80">Happy Customers</CardDescription>
+                    <div>
+                        <CardTitle className="text-2xl font-bold">5,000+</CardTitle>
+                        <CardDescription className="text-primary-foreground/80">Happy Customers</CardDescription>
+                    </div>
                 </CardHeader>
             </Card>
-             <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground">
-                <CardHeader>
-                    <Award className="h-8 w-8 text-background" />
-                    <CardTitle className="text-2xl font-bold">4.9/5</CardTitle>
-                    <CardDescription className="text-primary-foreground/80">Average Rating</CardDescription>
+             <Card className="bg-primary-foreground/10 border-primary-foreground/20 text-primary-foreground backdrop-blur-sm">
+                 <CardHeader className="flex flex-row items-center gap-4">
+                    <TrendingUp className="h-8 w-8 text-background" />
+                    <div>
+                        <CardTitle className="text-2xl font-bold">98%</CardTitle>
+                        <CardDescription className="text-primary-foreground/80">Satisfaction Rate</CardDescription>
+                    </div>
                 </CardHeader>
             </Card>
           </div>
@@ -214,6 +220,9 @@ export default function HomePage() {
                     </Avatar>
                     <div>
                       <p className="font-semibold">{testimonial.name}</p>
+                       <div className="flex text-yellow-500">
+                          <Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" /><Star className="h-4 w-4 fill-current" />
+                       </div>
                     </div>
                   </div>
                   <p className="text-muted-foreground italic">"{testimonial.text}"</p>
@@ -248,9 +257,9 @@ export default function HomePage() {
                             <Card className="overflow-hidden cursor-pointer">
                               <div className="relative aspect-video">
                                 <Image
-                                  src={image.src}
-                                  alt={image.alt}
-                                  data-ai-hint={image.hint}
+                                  src={image.imageUrl}
+                                  alt={image.description}
+                                  data-ai-hint={image.imageHint}
                                   fill
                                   className="object-cover transition-transform hover:scale-105"
                                 />
@@ -268,12 +277,12 @@ export default function HomePage() {
               {selectedImage && (
                 <DialogContent className="max-w-3xl">
                   <DialogHeader>
-                    <DialogTitle>{selectedImage.alt}</DialogTitle>
+                    <DialogTitle>{selectedImage.description}</DialogTitle>
                   </DialogHeader>
                   <div className="relative aspect-video">
                      <Image
-                        src={selectedImage.src}
-                        alt={selectedImage.alt}
+                        src={selectedImage.imageUrl}
+                        alt={selectedImage.description}
                         fill
                         className="object-contain rounded-md"
                       />
